@@ -1,15 +1,24 @@
 import 'dotenv/config'
-import { spawnSync } from 'node:child_process';
-import { request } from "@playwright/test";
+import { execSync } from 'node:child_process';
+import {APIResponse, request} from "@playwright/test";
+
+interface JSONLDResponseMember {
+    readonly '@id': string|number,
+    readonly '@type': string
+}
+interface JSONLDResponse<T> {
+    readonly '@context': string,
+    readonly '@id': string,
+    readonly '@type': string,
+    readonly 'hydra:totalItems': number,
+    'hydra:member': ReadonlyArray<T&JSONLDResponseMember>
+}
 
 const tokens: Map<string, string> = new Map()
 export const apiUrl = process.env.API_URL || 'http://localhost:8000'
 export function loadFixtures() {
     console.info('Loading fixtures...')
-    spawnSync(
-        'sh',
-        ['-c', `cd ${process.env.API_PATH}; docker-compose exec php -T bin/console hautelook:fixtures:load --quiet`]
-    )
+    execSync(`cd ${process.env.API_PATH}; docker-compose exec -T php bin/console hautelook:fixtures:load --quiet >> /dev/null`)
 }
 
 export async function getAuthToken (credentials = {email: 'user_base@example.com', password: '0000'}) {
@@ -30,3 +39,12 @@ export async function getAuthToken (credentials = {email: 'user_base@example.com
     }
     return 'Bearer ' + tokens.get(credentials.email)
 }
+
+export async function getJsonLDResponse(response:APIResponse) {
+    return await response.json() as JSONLDResponse<object>
+}
+
+export async function getJsonLDResponseTotalMembers(response:APIResponse): Promise<number> {
+    return (await getJsonLDResponse(response))["hydra:totalItems"]
+}
+
