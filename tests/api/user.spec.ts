@@ -1,5 +1,5 @@
 import {test, expect, APIResponse,} from '@playwright/test';
-import { apiUrl, loadFixtures, getAuthToken} from "../../lib/common/api";
+import { apiUrl, loadFixtures, getAuthToken} from "@lib/common/api";
 
 test.beforeEach(async () => {
     loadFixtures();
