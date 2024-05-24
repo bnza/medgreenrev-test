@@ -1,19 +1,20 @@
+import { expect as baseExpect, type Locator } from '@playwright/test';
 
-import { expect as baseExpect, type Locator } from "@playwright/test";
-
-export { test } from "@playwright/test";
+export { test } from '@playwright/test';
 
 export const expect = baseExpect.extend({
   async toBeEnabledLink(locator: Locator) {
-    const pass = await locator.getAttribute('disabled', {timeout: 5000}) === null
+    const pass =
+      (await locator.getAttribute('disabled', { timeout: 5000 })) === null;
     if (pass) {
       return {
-        message: () => "passed",
+        message: () => 'passed',
         pass: true,
       };
     } else {
       return {
-        message: () => `toBeEnabledLink() assertion failed.\nYou expected '${locator}' to be enabled.\n`,
+        message: () =>
+          `toBeEnabledLink() assertion failed.\nYou expected '${locator}' to be enabled.\n`,
         pass: false,
       };
     }
