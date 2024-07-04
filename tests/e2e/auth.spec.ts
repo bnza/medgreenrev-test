@@ -1,19 +1,19 @@
-import { test, expect, APIResponse } from '@playwright/test';
-import { apiUrl, loadFixtures, getAuthToken } from '@lib/common/api';
-import { LoginPage } from '@lib/poms/login-page';
+import { test, expect, APIResponse } from '@playwright/test'
+import { apiUrl, loadFixtures, getAuthToken } from '@lib/common/api'
+import { LoginPage } from '@lib/poms/login-page'
 
 test.beforeEach(async () => {
-  loadFixtures();
-});
+  loadFixtures()
+})
 
 test('Login succeed', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  await loginPage.goto();
-  await loginPage.login();
+  const loginPage = new LoginPage(page)
+  await loginPage.goto()
+  await loginPage.login()
   await expect(page.getByTestId('app-snackbar')).toHaveText(
     /successfully logged in/,
-  );
-});
+  )
+})
 
 // test('Expired JWT handling',async ({ page }) => {
 //     await page.route('*/**/api/login', async route => {

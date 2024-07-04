@@ -1,1 +1,4 @@
 .nuxt
+playwright-report
+node_modules
+.idea

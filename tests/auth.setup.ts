@@ -1,37 +1,37 @@
-import { test as setup, expect } from '@playwright/test';
+import { test as setup, expect } from '@playwright/test'
 
-import { LoginPage, credentials } from '@lib/poms/login-page';
+import { LoginPage, credentials } from '@lib/poms/login-page'
 
-const adminFile = 'playwright/.auth/admin.json';
+const adminFile = 'playwright/.auth/admin.json'
 
 setup('authenticate as admin ser', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  await loginPage.goto();
-  await loginPage.login(credentials.ADMIN);
+  const loginPage = new LoginPage(page)
+  await loginPage.goto()
+  await loginPage.login(credentials.ADMIN)
   await expect(page.getByTestId('app-snackbar')).toHaveText(
     /successfully logged in/,
-  );
-  await page.context().storageState({ path: adminFile });
-});
+  )
+  await page.context().storageState({ path: adminFile })
+})
 
-const editorFile = 'playwright/.auth/editor.json';
+const editorFile = 'playwright/.auth/editor.json'
 setup('authenticate as editor user', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  await loginPage.goto();
-  await loginPage.login(credentials.EDITOR);
+  const loginPage = new LoginPage(page)
+  await loginPage.goto()
+  await loginPage.login(credentials.EDITOR)
   await expect(page.getByTestId('app-snackbar')).toHaveText(
     /successfully logged in/,
-  );
-  await page.context().storageState({ path: editorFile });
-});
+  )
+  await page.context().storageState({ path: editorFile })
+})
 
-const baseFile = 'playwright/.auth/base.json';
+const baseFile = 'playwright/.auth/base.json'
 setup('authenticate as base user', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  await loginPage.goto();
-  await loginPage.login(credentials.BASE);
+  const loginPage = new LoginPage(page)
+  await loginPage.goto()
+  await loginPage.login(credentials.BASE)
   await expect(page.getByTestId('app-snackbar')).toHaveText(
     /successfully logged in/,
-  );
-  await page.context().storageState({ path: baseFile });
-});
+  )
+  await page.context().storageState({ path: baseFile })
+})

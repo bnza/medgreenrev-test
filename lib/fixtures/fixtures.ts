@@ -1,7 +1,7 @@
-import { mergeExpects } from "@playwright/test";
-import  {expect as toBeEnabledLinkExpect } from '@lib/fixtures/toBeEnabledLink';
-import  {expect as toBeDisabledLinkExpect } from '@lib/fixtures/toBeDisabledLink';
+import { mergeExpects } from '@playwright/test'
+import { expect as toBeEnabledExpect } from '@fixtures/toBeEnabled'
+import { expect as toBeDisabledExpect } from '@lib/fixtures/toBeDisabled'
 
-export { test } from "@playwright/test";
+export { test } from '@playwright/test'
 
-export const expect = mergeExpects(toBeEnabledLinkExpect, toBeDisabledLinkExpect);
+export const expect = mergeExpects(toBeEnabledExpect, toBeDisabledExpect)
