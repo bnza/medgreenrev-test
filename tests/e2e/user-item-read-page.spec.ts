@@ -1,0 +1,146 @@
+import { test } from '@playwright/test'
+
+import { UserItemReadPage } from '@lib/poms/user-item-read-page'
+import { UserCollectionPage } from '@lib/poms/user-collection-page'
+import { loadFixtures } from '@lib/common/api'
+import { expect } from '@fixtures/fixtures'
+
+test.beforeEach(async () => {
+  loadFixtures()
+})
+
+const logoutAndLoginAfterResetPassword = async (page: UserItemReadPage) => {
+  await expect(page.page.locator('#plainPassword')).toHaveText(/.{10}/)
+  const userIdentifier = await page.page
+    .getByTestId('user-reset-password-dialog')
+    .getByTestId('reset-pw-user-identifier')
+    .textContent()
+  const plainPassword = await page.page.locator('#plainPassword').textContent()
+  await page.page
+    .getByTestId('user-reset-password-dialog')
+    .getByRole('button')
+    .nth(0)
+    .click()
+  await page.logout()
+  await page.login({
+    email: userIdentifier,
+    password: plainPassword,
+  })
+}
+
+test.describe('Admin user', () => {
+  test.use({ storageState: 'playwright/.auth/admin.json' })
+  test('Delete item', async ({ page }) => {
+    const itemPageObjectModel = new UserItemReadPage(page)
+    await itemPageObjectModel.navigateFromCollectionPage(
+      'user_base@example.com',
+      'DELETE',
+    )
+    await expect(
+      itemPageObjectModel.page.getByTestId('delete-item-alert-row'),
+    ).toHaveCount(1)
+    const _url = itemPageObjectModel.page.url()
+    await itemPageObjectModel.page
+      .getByTestId('app-data-card-toolbar')
+      .getByRole('button')
+      .click()
+    await expect(
+      itemPageObjectModel.page
+        .getByTestId('app-data-card-toolbar')
+        .getByText(/Users/),
+    ).not.toHaveText('delete')
+    await page.goto(_url)
+    await itemPageObjectModel.pageHasEmptyItem()
+  })
+  test('Update item', async ({ page }) => {
+    const itemPageObjectModel = new UserItemReadPage(page)
+    await itemPageObjectModel.navigateFromCollectionPage(
+      'user_base@example.com',
+      'EDIT',
+    )
+    await itemPageObjectModel.page.getByLabel('ROLE_EDITOR').click()
+    await expect(itemPageObjectModel.page.getByLabel('email')).toHaveAttribute(
+      'readonly',
+    )
+    await itemPageObjectModel.page
+      .getByTestId('app-data-card-toolbar')
+      .getByRole('button')
+      .click()
+    await expect(
+      itemPageObjectModel.page
+        .getByTestId('app-data-card-toolbar')
+        .getByText(/User/),
+    ).not.toHaveText('update')
+    await expect(
+      itemPageObjectModel.page.getByLabel('ROLE_EDITOR'),
+    ).toBeChecked()
+  })
+  test('Create item', async ({ page }) => {
+    const itemPageObjectModel = new UserItemReadPage(page)
+    const collectionPageModel = new UserCollectionPage(page)
+    await collectionPageModel.waitTableData()
+    await collectionPageModel.getCreateLink.click()
+
+    await itemPageObjectModel.page.getByLabel('email').fill('invalid')
+    await expect(
+      itemPageObjectModel.page.getByText('Value is not a valid email address'),
+    ).toHaveCount(1)
+    await itemPageObjectModel.page.getByLabel('email').fill('')
+    await expect(
+      itemPageObjectModel.page.getByText('This field is required'),
+    ).toHaveCount(1)
+    await itemPageObjectModel.page
+      .getByLabel('email')
+      .fill('user_test@example.com')
+    await itemPageObjectModel.page.getByLabel('ROLE_EDITOR').click()
+    await itemPageObjectModel.page
+      .getByTestId('app-data-card-toolbar')
+      .getByRole('button')
+      .click()
+    await expect(
+      itemPageObjectModel.page
+        .getByTestId('app-data-card-toolbar')
+        .getByText(/User/),
+    ).not.toHaveText('create')
+    await expect(itemPageObjectModel.page.getByLabel('email')).toHaveValue(
+      'user_test@example.com',
+    )
+    await expect(
+      itemPageObjectModel.page.getByLabel('ROLE_EDITOR'),
+    ).toBeChecked()
+    await logoutAndLoginAfterResetPassword(itemPageObjectModel)
+    // await expect(itemPageObjectModel.page.locator('#plainPassword')).toHaveText(
+    //   /.{10}/,
+    // )
+    // const plainPassword = await itemPageObjectModel.page
+    //   .locator('#plainPassword')
+    //   .textContent()
+    // await itemPageObjectModel.page
+    //   .getByTestId('user-reset-password-dialog')
+    //   .getByRole('button')
+    //   .nth(0)
+    //   .click()
+    // await itemPageObjectModel.logout()
+    // await itemPageObjectModel.login({
+    //   email: 'user_test@example.com',
+    //   password: plainPassword,
+    // })
+  })
+  test('ResetPassword', async ({ page }) => {
+    const itemPageObjectModel = new UserItemReadPage(page)
+    await itemPageObjectModel.navigateFromCollectionPage(
+      'user_base@example.com',
+      'READ',
+    )
+    await expect(
+      itemPageObjectModel.page.getByLabel('ROLE_EDITOR'),
+    ).toHaveCount(1)
+    await itemPageObjectModel.resetPasswordButton.click()
+    await itemPageObjectModel.page
+      .getByTestId('user-reset-password-dialog')
+      .getByRole('button')
+      .nth(1)
+      .click()
+    await logoutAndLoginAfterResetPassword(itemPageObjectModel)
+  })
+})

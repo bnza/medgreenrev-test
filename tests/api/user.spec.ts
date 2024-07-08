@@ -27,3 +27,34 @@ test('GET /users/me', async ({ request }) => {
   })
   expect(response.ok()).toBeTruthy()
 })
+
+test('User email cannot be updated', async ({ request }) => {
+  const adminToken = await getAuthToken({
+    email: 'user_admin@example.com',
+    password: '0002',
+  })
+  const usersResponse = await request.get(`${apiUrl}/admin/users`, {
+    headers: {
+      Authorization: adminToken,
+    },
+  })
+  const userId = (await usersResponse.json())['hydra:member']?.find(
+    (el: { email: string }) => (el.email = 'user_base@example.com'),
+  )['id']
+  const patchResponse = await request.patch(`${apiUrl}/admin/users/${userId}`, {
+    headers: {
+      Authorization: adminToken,
+      'content-type': 'application/merge-patch+json',
+    },
+    data: {
+      email: 'user_different@example.com',
+    },
+  })
+  expect(patchResponse.ok()).toBeTruthy()
+  const userResponse = await request.get(`${apiUrl}/admin/users/${userId}`, {
+    headers: {
+      Authorization: adminToken,
+    },
+  })
+  expect((await userResponse.json()).email).toBe('user_base@example.com')
+})

@@ -1,22 +1,26 @@
 import { type Locator, type Page } from '@playwright/test'
 
-import { SiteCollectionPage } from '@lib/poms/site-collection-page'
 import { expect } from '@fixtures/fixtures'
 import type {
   AbstractCollectionPage,
   NavigationLinksTypes,
 } from '@lib/poms/abstract-collection-page'
+import { AbstractAppPage } from '@lib/poms/abstract-app-page'
 
-export abstract class AbstractItemReadPage {
-  readonly page: Page
+export abstract class AbstractItemReadPage extends AbstractAppPage {
   readonly collectionPageObjectModel: AbstractCollectionPage
-  readonly getTitle: Locator
-  readonly getForm: Locator
+  readonly deleteItemButton: Locator
+  readonly updateItemButton: Locator
 
   constructor(page: Page) {
-    this.page = page
-    this.getTitle = page.getByTestId('app-data-card-toolbar')
-    this.getForm = page.getByTestId('app-data-card')
+    super(page)
+    this.collectionPageObjectModel = this._getCollectionPageModel(page)
+    this.deleteItemButton = page
+      .getByTestId('app-data-card-toolbar')
+      .getByTestId('delete-item-button')
+    this.updateItemButton = page
+      .getByTestId('app-data-card-toolbar')
+      .getByTestId('delete-item-button')
   }
 
   protected abstract _getCollectionPageModel(page: Page): AbstractCollectionPage
@@ -25,9 +29,10 @@ export abstract class AbstractItemReadPage {
     rowSelector: number | string,
     linkType: NavigationLinksTypes = 'READ',
   ) {
-    const siteCollectionPage = new SiteCollectionPage(this.page)
-    await siteCollectionPage.waitTableData()
-    await siteCollectionPage.getNavigationLink(rowSelector, linkType).click()
+    await this.collectionPageObjectModel.waitTableData()
+    await this.collectionPageObjectModel
+      .getNavigationLink(rowSelector, linkType)
+      .click()
   }
 
   async formHasExpectedTitle(expectedTitle: string | RegExp) {
@@ -58,11 +63,5 @@ export abstract class AbstractItemReadPage {
 
   async pageHasEmptyItem() {
     await expect(this.page.getByTestId('resource-empty-state')).toHaveCount(1)
-  }
-
-  async fillForm(formData: Record<string, string>) {
-    return Object.entries(formData).map(([label, value]) => {
-      this.page.getByLabel(label).fill(value)
-    })
   }
 }
