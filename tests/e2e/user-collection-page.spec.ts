@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test'
 import { UserCollectionPage } from '@lib/poms/user-collection-page'
 import { LoginPage } from '@lib/poms/login-page'
 import { loadFixtures } from '@lib/common/api'
+import { logoutAndLoginAfterResetPassword } from '@lib/utils/reset-password-dialog'
 
 test.beforeEach(async () => {
   loadFixtures()
@@ -99,13 +100,14 @@ test.describe('Admin user', () => {
     await expect(
       userCollectionPage.page.getByTestId('app-snackbar'),
     ).toHaveText('Copied!')
-    await userCollectionPage.page
-      .getByTestId('user-reset-password-dialog')
-      .getByRole('button')
-      .nth(0)
-      .click()
-    await expect(
-      userCollectionPage.page.getByTestId('user-reset-password-dialog'),
-    ).toHaveCount(0)
+    await logoutAndLoginAfterResetPassword(userCollectionPage)
+    // await userCollectionPage.page
+    //   .getByTestId('user-reset-password-dialog')
+    //   .getByRole('button')
+    //   .nth(0)
+    //   .click()
+    // await expect(
+    //   userCollectionPage.page.getByTestId('user-reset-password-dialog'),
+    // ).toHaveCount(0)
   })
 })

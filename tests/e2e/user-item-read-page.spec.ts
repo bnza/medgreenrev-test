@@ -1,32 +1,13 @@
 import { test } from '@playwright/test'
-
+import { expect } from '@fixtures/fixtures'
+import { loadFixtures } from '@lib/common/api'
+import { logoutAndLoginAfterResetPassword } from '@lib/utils/reset-password-dialog'
 import { UserItemReadPage } from '@lib/poms/user-item-read-page'
 import { UserCollectionPage } from '@lib/poms/user-collection-page'
-import { loadFixtures } from '@lib/common/api'
-import { expect } from '@fixtures/fixtures'
 
 test.beforeEach(async () => {
   loadFixtures()
 })
-
-const logoutAndLoginAfterResetPassword = async (page: UserItemReadPage) => {
-  await expect(page.page.locator('#plainPassword')).toHaveText(/.{10}/)
-  const userIdentifier = await page.page
-    .getByTestId('user-reset-password-dialog')
-    .getByTestId('reset-pw-user-identifier')
-    .textContent()
-  const plainPassword = await page.page.locator('#plainPassword').textContent()
-  await page.page
-    .getByTestId('user-reset-password-dialog')
-    .getByRole('button')
-    .nth(0)
-    .click()
-  await page.logout()
-  await page.login({
-    email: userIdentifier,
-    password: plainPassword,
-  })
-}
 
 test.describe('Admin user', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' })
@@ -109,22 +90,6 @@ test.describe('Admin user', () => {
       itemPageObjectModel.page.getByLabel('ROLE_EDITOR'),
     ).toBeChecked()
     await logoutAndLoginAfterResetPassword(itemPageObjectModel)
-    // await expect(itemPageObjectModel.page.locator('#plainPassword')).toHaveText(
-    //   /.{10}/,
-    // )
-    // const plainPassword = await itemPageObjectModel.page
-    //   .locator('#plainPassword')
-    //   .textContent()
-    // await itemPageObjectModel.page
-    //   .getByTestId('user-reset-password-dialog')
-    //   .getByRole('button')
-    //   .nth(0)
-    //   .click()
-    // await itemPageObjectModel.logout()
-    // await itemPageObjectModel.login({
-    //   email: 'user_test@example.com',
-    //   password: plainPassword,
-    // })
   })
   test('ResetPassword', async ({ page }) => {
     const itemPageObjectModel = new UserItemReadPage(page)

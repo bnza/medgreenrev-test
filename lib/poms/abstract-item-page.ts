@@ -8,12 +8,14 @@ import type {
 import { AbstractAppPage } from '@lib/poms/abstract-app-page'
 
 export abstract class AbstractItemReadPage extends AbstractAppPage {
+  readonly getForm: Locator
   readonly collectionPageObjectModel: AbstractCollectionPage
   readonly deleteItemButton: Locator
   readonly updateItemButton: Locator
 
   constructor(page: Page) {
     super(page)
+    this.getForm = page.getByTestId('app-data-card')
     this.collectionPageObjectModel = this._getCollectionPageModel(page)
     this.deleteItemButton = page
       .getByTestId('app-data-card-toolbar')

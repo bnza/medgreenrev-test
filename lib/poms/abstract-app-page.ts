@@ -6,14 +6,12 @@ import { LoginPage } from '@lib/poms/login-page'
 export abstract class AbstractAppPage {
   readonly page: Page
   readonly getTitle: Locator
-  readonly getForm: Locator
   readonly loginButton: Locator
   readonly homaPageLogo: Locator
 
   constructor(page: Page) {
     this.page = page
     this.getTitle = page.getByTestId('app-data-card-toolbar')
-    this.getForm = page.getByTestId('app-data-card')
     this.loginButton = page.getByTestId('login-button')
     this.homaPageLogo = page.getByTestId('home-page-logo')
   }

@@ -1,5 +1,6 @@
 import { type Locator, type Page } from '@playwright/test'
 import { expect } from '@fixtures/fixtures'
+import { AbstractAppPage } from '@lib/poms/abstract-app-page'
 
 const navigationLinksTypes = {
   READ: 0,
@@ -14,16 +15,13 @@ type NavigationLinkSelector = {
   linkType: NavigationLinksTypes
 }
 
-export abstract class AbstractCollectionPage {
-  readonly page: Page
-  readonly getTitle: Locator
+export abstract class AbstractCollectionPage extends AbstractAppPage {
   readonly getTable: Locator
   readonly getCreateLink: Locator
   readonly navigationLinksTypes = navigationLinksTypes
 
   constructor(page: Page) {
-    this.page = page
-    this.getTitle = page.getByTestId('app-data-card-toolbar')
+    super(page)
     this.getTable = page.getByTestId('app-data-card').getByRole('table')
     this.getCreateLink = page
       .getByTestId('app-data-card-toolbar')
