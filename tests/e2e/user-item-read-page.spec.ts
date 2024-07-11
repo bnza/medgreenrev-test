@@ -102,7 +102,7 @@ test.describe('Admin user', () => {
     ).toHaveCount(1)
     await itemPageObjectModel.resetPasswordButton.click()
     await itemPageObjectModel.page
-      .getByTestId('user-reset-password-dialog')
+      .getByTestId('user-password-dialog')
       .getByRole('button')
       .nth(1)
       .click()

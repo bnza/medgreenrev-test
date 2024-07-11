@@ -6,12 +6,12 @@ export const logoutAndLoginAfterResetPassword = async (
 ) => {
   await expect(page.page.locator('#plainPassword')).toHaveText(/.{10}/)
   const userIdentifier = await page.page
-    .getByTestId('user-reset-password-dialog')
-    .getByTestId('reset-pw-user-identifier')
+    .getByTestId('user-password-dialog')
+    .getByTestId('user-pw-identifier')
     .textContent()
   const plainPassword = await page.page.locator('#plainPassword').textContent()
   await page.page
-    .getByTestId('user-reset-password-dialog')
+    .getByTestId('user-password-dialog')
     .getByRole('button')
     .nth(0)
     .click()

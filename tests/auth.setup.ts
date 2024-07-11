@@ -1,6 +1,10 @@
 import { test as setup, expect } from '@playwright/test'
-
 import { LoginPage, credentials } from '@lib/poms/login-page'
+import { loadFixtures } from '@lib/common/api'
+
+setup.beforeAll(() => {
+  loadFixtures()
+})
 
 const adminFile = 'playwright/.auth/admin.json'
 

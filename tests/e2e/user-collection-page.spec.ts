@@ -79,21 +79,21 @@ test.describe('Admin user', () => {
       .getRefreshPasswordButton('user_base@example.com')
       .click()
     await expect(
-      userCollectionPage.page.getByTestId('user-reset-password-dialog'),
+      userCollectionPage.page.getByTestId('user-password-dialog'),
     ).toHaveText(/Are you sure you want to/)
     await userCollectionPage.page
-      .getByTestId('user-reset-password-dialog')
+      .getByTestId('user-password-dialog')
       .getByRole('button')
       .nth(1)
       .click()
     await expect(
-      userCollectionPage.page.getByTestId('user-reset-password-dialog'),
+      userCollectionPage.page.getByTestId('user-password-dialog'),
     ).toHaveText(/Resetting password/)
     await expect(userCollectionPage.page.locator('#plainPassword')).toHaveCount(
       1,
     )
     await userCollectionPage.page
-      .getByTestId('user-reset-password-dialog')
+      .getByTestId('user-password-dialog')
       .getByRole('button')
       .nth(1)
       .click()
@@ -101,13 +101,5 @@ test.describe('Admin user', () => {
       userCollectionPage.page.getByTestId('app-snackbar'),
     ).toHaveText('Copied!')
     await logoutAndLoginAfterResetPassword(userCollectionPage)
-    // await userCollectionPage.page
-    //   .getByTestId('user-reset-password-dialog')
-    //   .getByRole('button')
-    //   .nth(0)
-    //   .click()
-    // await expect(
-    //   userCollectionPage.page.getByTestId('user-reset-password-dialog'),
-    // ).toHaveCount(0)
   })
 })

@@ -7,13 +7,21 @@ export abstract class AbstractAppPage {
   readonly page: Page
   readonly getTitle: Locator
   readonly loginButton: Locator
-  readonly homaPageLogo: Locator
+  readonly homePageLogo: Locator
+  readonly appDataCardToolbar: Locator
+  readonly authUserButton: Locator
+  readonly userSettingsMeLink: Locator
+  readonly getAppSnackbar: Locator
 
   constructor(page: Page) {
     this.page = page
     this.getTitle = page.getByTestId('app-data-card-toolbar')
     this.loginButton = page.getByTestId('login-button')
-    this.homaPageLogo = page.getByTestId('home-page-logo')
+    this.appDataCardToolbar = page.getByTestId('app-data-card-toolbar')
+    this.homePageLogo = page.getByTestId('home-page-logo')
+    this.authUserButton = page.getByTestId('auth-user-button')
+    this.userSettingsMeLink = page.getByTestId('user-settings-me-link')
+    this.getAppSnackbar = page.getByTestId('app-snackbar')
   }
 
   async logout() {
@@ -28,7 +36,7 @@ export abstract class AbstractAppPage {
   }
 
   async expectHomePage() {
-    await expect(this.homaPageLogo).toHaveCount(1)
+    await expect(this.homePageLogo).toHaveCount(1)
   }
 
   async login(
