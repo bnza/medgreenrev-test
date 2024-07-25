@@ -26,6 +26,7 @@ export abstract class AbstractCollectionPage extends AbstractAppPage {
     this.getCreateLink = page
       .getByTestId('app-data-card-toolbar')
       .getByRole('link')
+      .nth(0)
   }
 
   abstract waitTableData(): Promise<void>
