@@ -60,4 +60,19 @@ export abstract class AbstractAppPage {
       .filter({ has: this.page.getByText(text, { exact: true }) })
       .click()
   }
+
+  async fillVuetifyVAutocompleteAncClickNth(
+    locator: Locator,
+    text: string,
+    nth: number = 0,
+  ) {
+    await locator.fill(text)
+    const autocompleteContentLocator = this.page.locator(
+      '.v-autocomplete__content .v-list-item',
+    )
+    await expect(autocompleteContentLocator).toHaveText(
+      /^((?!No data available).)*$/,
+    )
+    await autocompleteContentLocator.nth(nth).click()
+  }
 }
