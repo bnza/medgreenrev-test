@@ -8,6 +8,7 @@ export abstract class AbstractAppPage {
   readonly getTitle: Locator
   readonly loginButton: Locator
   readonly homePageLogo: Locator
+  readonly getAppDataCard: Locator
   readonly appDataCardToolbar: Locator
   readonly authUserButton: Locator
   readonly userSettingsMeLink: Locator
@@ -15,6 +16,7 @@ export abstract class AbstractAppPage {
 
   constructor(page: Page) {
     this.page = page
+    this.getAppDataCard = page.getByTestId('app-data-card')
     this.getTitle = page.getByTestId('app-data-card-toolbar')
     this.loginButton = page.getByTestId('login-button')
     this.appDataCardToolbar = page.getByTestId('app-data-card-toolbar')
@@ -49,5 +51,13 @@ export abstract class AbstractAppPage {
     await expect(this.page.getByTestId('app-snackbar')).toHaveText(
       /successfully logged in/,
     )
+  }
+
+  async clickVuetifyVSelect(locator: Locator, text: string) {
+    await locator.click()
+    await this.page
+      .locator('.v-select__content .v-list-item')
+      .filter({ has: this.page.getByText(text, { exact: true }) })
+      .click()
   }
 }

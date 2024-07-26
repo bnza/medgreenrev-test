@@ -4,7 +4,7 @@ import { AbstractItemReadPage } from '@lib/poms/abstract-item-page'
 
 import { UserCollectionPage } from '@lib/poms/user-collection-page'
 
-export class UserItemReadPage extends AbstractItemReadPage {
+export class UserItemPage extends AbstractItemReadPage {
   readonly resetPasswordButton: Locator
 
   constructor(page: Page) {

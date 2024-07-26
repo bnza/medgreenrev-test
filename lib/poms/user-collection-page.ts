@@ -8,4 +8,8 @@ export class UserCollectionPage extends AbstractCollectionPage {
   getRefreshPasswordButton(rowSelector: number | string) {
     return this.getTableRow(rowSelector).getByRole('button')
   }
+
+  get apiUrl(): string {
+    return '**/api/admin/users'
+  }
 }

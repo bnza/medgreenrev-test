@@ -2,7 +2,7 @@ import { test } from '@playwright/test'
 import { expect } from '@fixtures/fixtures'
 import { loadFixtures } from '@lib/common/api'
 import { logoutAndLoginAfterResetPassword } from '@lib/utils/reset-password-dialog'
-import { UserItemReadPage } from '@lib/poms/user-item-read-page'
+import { UserItemPage } from '@lib/poms/user-item-page'
 import { UserCollectionPage } from '@lib/poms/user-collection-page'
 
 test.beforeEach(async () => {
@@ -12,7 +12,7 @@ test.beforeEach(async () => {
 test.describe('Admin user', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' })
   test('Delete item', async ({ page }) => {
-    const itemPageObjectModel = new UserItemReadPage(page)
+    const itemPageObjectModel = new UserItemPage(page)
     await itemPageObjectModel.navigateFromCollectionPage(
       'user_base@example.com',
       'DELETE',
@@ -34,7 +34,7 @@ test.describe('Admin user', () => {
     await itemPageObjectModel.pageHasEmptyItem()
   })
   test('Update item', async ({ page }) => {
-    const itemPageObjectModel = new UserItemReadPage(page)
+    const itemPageObjectModel = new UserItemPage(page)
     await itemPageObjectModel.navigateFromCollectionPage(
       'user_base@example.com',
       'EDIT',
@@ -57,7 +57,7 @@ test.describe('Admin user', () => {
     ).toBeChecked()
   })
   test('Create item', async ({ page }) => {
-    const itemPageObjectModel = new UserItemReadPage(page)
+    const itemPageObjectModel = new UserItemPage(page)
     const collectionPageModel = new UserCollectionPage(page)
     await collectionPageModel.waitTableData()
     await collectionPageModel.getCreateLink.click()
@@ -92,7 +92,7 @@ test.describe('Admin user', () => {
     await logoutAndLoginAfterResetPassword(itemPageObjectModel)
   })
   test('ResetPassword', async ({ page }) => {
-    const itemPageObjectModel = new UserItemReadPage(page)
+    const itemPageObjectModel = new UserItemPage(page)
     await itemPageObjectModel.navigateFromCollectionPage(
       'user_base@example.com',
       'READ',

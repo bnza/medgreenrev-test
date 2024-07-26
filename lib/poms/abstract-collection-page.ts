@@ -18,7 +18,10 @@ type NavigationLinkSelector = {
 export abstract class AbstractCollectionPage extends AbstractAppPage {
   readonly getTable: Locator
   readonly getCreateLink: Locator
+  readonly getSearchLink: Locator
   readonly navigationLinksTypes = navigationLinksTypes
+
+  // readonly collectionResponsePromise
 
   constructor(page: Page) {
     super(page)
@@ -27,9 +30,18 @@ export abstract class AbstractCollectionPage extends AbstractAppPage {
       .getByTestId('app-data-card-toolbar')
       .getByRole('link')
       .nth(0)
+    this.getSearchLink = page
+      .getByTestId('app-data-card-toolbar')
+      .getByTestId('collection-search-link')
   }
 
   abstract waitTableData(): Promise<void>
+
+  abstract get apiUrl(): string | RegExp
+
+  get collectionResponsePromise() {
+    return this.page.waitForResponse(this.apiUrl)
+  }
 
   protected async _waitTableData(
     url: string,
@@ -113,5 +125,12 @@ export abstract class AbstractCollectionPage extends AbstractAppPage {
       locator = this.getNavigationLink(locator.rowSelector, locator.linkType)
     }
     await expect(locator, 'Link is disabled').toBeDisabled()
+  }
+
+  async expectResponseTotalItems(count: number) {
+    const response = await this.collectionResponsePromise
+    const body = await response.json()
+    // @ts-ignore
+    expect(body['hydra:totalItems']).toBe(count)
   }
 }

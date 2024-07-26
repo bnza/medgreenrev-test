@@ -4,7 +4,7 @@ import { AbstractItemReadPage } from '@lib/poms/abstract-item-page'
 
 import { SiteCollectionPage } from '@lib/poms/site-collection-page'
 
-export class SiteItemReadPage extends AbstractItemReadPage {
+export class SiteItemPage extends AbstractItemReadPage {
   protected _getCollectionPageModel(page: Page): AbstractCollectionPage {
     return new SiteCollectionPage(page)
   }
