@@ -1,6 +1,7 @@
 services:
   playwright:
     #user: "1000:1000"
+    tty: true
     network_mode: host
     build:
       context: .
@@ -8,9 +9,10 @@ services:
       - API_CONTAINER_ID=${API_CONTAINER_ID:-erc-api-php-1}
       - DISPLAY=${DISPLAY:-:0}
     volumes:
-      - "${API_PATH}:/api:ro"
-      - ./app/.env:/app/.env
-      - ./app/tests:/app/tests:rw
-      - ./app/lib:/app/lib
+      #- "${API_PATH}:/api:ro"
+      #- ./app/.env:/app/.env
+      #- ./app/tests:/app/tests:rw
+      #- ./app/lib:/app/lib
+      - ./app:/app
       - /tmp/.X11-unix:/tmp/.X11-unix
       - /run/docker.sock:/run/docker.sock

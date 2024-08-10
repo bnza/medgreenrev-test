@@ -19,7 +19,7 @@ export const apiUrl = process.env.API_URL || 'http://localhost:8000'
 export function loadFixtures() {
   console.info('Loading fixtures...')
   execSync(
-      `docker  exec ${process.env.API_CONTAINER_ID} bin/console hautelook:fixtures:load --quiet >> /dev/null`,
+      `docker exec ${process.env.API_CONTAINER_ID} bin/console hautelook:fixtures:load --quiet >> /dev/null`,
   )
 }
 
