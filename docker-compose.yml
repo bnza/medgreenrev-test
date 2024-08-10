@@ -1,3 +1,4 @@
+name: medgreenrev-tests
 services:
   playwright:
     #user: "1000:1000"
