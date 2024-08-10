@@ -6,7 +6,7 @@ export class StratigraphicUnitCollectionPage extends AbstractCollectionPage {
   async waitTableData() {
     await this._waitTableData(
       '#/data/stratigraphic-units',
-      'Stratigraphic Units',
+      /Stratigraphic Units/,
     )
   }
 

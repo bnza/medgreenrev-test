@@ -45,7 +45,7 @@ export abstract class AbstractCollectionPage extends AbstractAppPage {
 
   protected async _waitTableData(
     url: string,
-    tableTitle: string,
+    tableTitle: string | RegExp,
     expectedTableHeader: string = 'ID',
   ) {
     await this.page.goto(url)

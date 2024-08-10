@@ -4,6 +4,7 @@ import { SiteItemPage } from '@lib/poms/site-item-page'
 import { SiteCollectionPage } from '@lib/poms/site-collection-page'
 import { loadFixtures } from '@lib/common/api'
 import { expect } from '@fixtures/fixtures'
+import { SiteSearchPage } from '@lib/poms/site-search-page'
 
 test.beforeEach(async () => {
   loadFixtures()
@@ -26,6 +27,45 @@ test.describe('Unauthenticated user', () => {
     const itemPageObjectModel = new SiteItemPage(page)
     await itemPageObjectModel.goto(0)
     await itemPageObjectModel.pageHasEmptyItem()
+  })
+  test('Stratigraphic units tab', async ({ page }) => {
+    const itemPageObjectModel = new SiteItemPage(page)
+    await itemPageObjectModel.navigateFromCollectionPage('ED')
+    await itemPageObjectModel.formHasExpectedTitle(/Site\sED/)
+    await itemPageObjectModel.getStratigraphicUnitsTab.click()
+    await itemPageObjectModel.getStratigraphicUnitsTabContent.getChildrenCollectionTable.expectRowCount(
+      10,
+    )
+    await itemPageObjectModel.getStratigraphicUnitsTabContent.getSearchButton.click()
+    const searchPageObject = new SiteSearchPage(page)
+    await searchPageObject.hasExpectedTitle()
+    await searchPageObject.expectToBeEmpty()
+    await searchPageObject.getAddFilterButton.click()
+    await expect(searchPageObject.getAddFilterDialogTitle).toHaveText(
+      'Add filter',
+    )
+    await expect(searchPageObject.getAddFilterDialogContent).toHaveCount(1)
+    await searchPageObject.clickVuetifyVSelect(
+      searchPageObject.getAddFilterDialogPropertyInput,
+      'interpretation',
+    )
+    await searchPageObject.clickVuetifyVSelect(
+      searchPageObject.getAddFilterDialogOperatorInput,
+      'contains',
+    )
+
+    await searchPageObject.getAddFilterDialogSingleOperatorInput.fill('grave')
+    await searchPageObject.getSubmitAddFilterButton.click()
+
+    await expect(searchPageObject.getAddFilterDialog).toHaveCount(0)
+    await expect(searchPageObject.getFiltersListItem).toHaveCount(1)
+    await searchPageObject.getSubmitAddFiltersButton.click()
+    await page.waitForURL('**/' + itemPageObjectModel.getBasePath() + '/*')
+    await itemPageObjectModel.formHasExpectedTitle(/Site\sED/)
+    await itemPageObjectModel.getStratigraphicUnitsTab.click()
+    await itemPageObjectModel.getStratigraphicUnitsTabContent.getChildrenCollectionTable.expectRowCount(
+      5,
+    )
   })
 })
 

@@ -12,6 +12,7 @@ export abstract class AbstractItemReadPage extends AbstractAppPage {
   readonly collectionPageObjectModel: AbstractCollectionPage
   readonly deleteItemButton: Locator
   readonly updateItemButton: Locator
+  readonly getDataTab: Locator
 
   constructor(page: Page) {
     super(page)
@@ -23,6 +24,7 @@ export abstract class AbstractItemReadPage extends AbstractAppPage {
     this.updateItemButton = page
       .getByTestId('app-data-card-toolbar')
       .getByTestId('delete-item-button')
+    this.getDataTab = page.getByRole('button').getByText('Data')
   }
 
   protected abstract _getCollectionPageModel(page: Page): AbstractCollectionPage
