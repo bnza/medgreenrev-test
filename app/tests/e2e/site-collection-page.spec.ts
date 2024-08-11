@@ -1,4 +1,4 @@
-import { test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import { SiteCollectionPage } from '@lib/poms/site-collection-page'
 import { loadFixtures } from '@lib/common/api'
 
@@ -9,57 +9,60 @@ test.beforeEach(async () => {
 test.describe('Unauthenticated user', () => {
   test.use({ storageState: { cookies: [], origins: [] } })
   test('Sites list succeed', async ({ page }) => {
-    const siteCollectionPage = new SiteCollectionPage(page)
-    await siteCollectionPage.waitTableData()
-    await siteCollectionPage.tableNotHasHeader('public')
-    await siteCollectionPage.tableCellHasText('ED', 'Ed-Dur')
-    await siteCollectionPage.linkIsEnabled({
+    const collectionPageObjectModel = new SiteCollectionPage(page)
+    await collectionPageObjectModel.waitTableData()
+    await collectionPageObjectModel.tableNotHasHeader('public')
+    await collectionPageObjectModel.tableCellHasText('ED', 'Ed-Dur')
+    await collectionPageObjectModel.linkIsEnabled({
       rowSelector: 'ED',
       linkType: 'READ',
     })
-    await siteCollectionPage.linkIsDisabled({
+    await collectionPageObjectModel.linkIsDisabled({
       rowSelector: 'ED',
       linkType: 'EDIT',
     })
-    await siteCollectionPage.linkIsDisabled({
+    await collectionPageObjectModel.linkIsDisabled({
       rowSelector: 'ED',
       linkType: 'DELETE',
     })
+    await collectionPageObjectModel.expectClickHeaderSendOrderCollectionRequest(
+      'code',
+    )
   })
 })
 
 test.describe('Base user', () => {
   test.use({ storageState: 'playwright/.auth/base.json' })
   test('Sites list succeed', async ({ page }) => {
-    const siteCollectionPage = new SiteCollectionPage(page)
-    await siteCollectionPage.waitTableData()
+    const collectionPageObjectModel = new SiteCollectionPage(page)
+    await collectionPageObjectModel.waitTableData()
   })
 })
 
 test.describe('Editor user', () => {
   test.use({ storageState: 'playwright/.auth/editor.json' })
   test('Sites list succeed', async ({ page }) => {
-    const siteCollectionPage = new SiteCollectionPage(page)
-    await siteCollectionPage.waitTableData()
+    const collectionPageObjectModel = new SiteCollectionPage(page)
+    await collectionPageObjectModel.waitTableData()
   })
 })
 
 test.describe('Admin user', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' })
   test('Sites list succeed', async ({ page }) => {
-    const siteCollectionPage = new SiteCollectionPage(page)
-    await siteCollectionPage.waitTableData()
-    await siteCollectionPage.tableHasHeader('public')
-    await siteCollectionPage.tableCellHasText('ED', 'Ed-Dur')
-    await siteCollectionPage.linkIsEnabled({
+    const collectionPageObjectModel = new SiteCollectionPage(page)
+    await collectionPageObjectModel.waitTableData()
+    await collectionPageObjectModel.tableHasHeader('public')
+    await collectionPageObjectModel.tableCellHasText('ED', 'Ed-Dur')
+    await collectionPageObjectModel.linkIsEnabled({
       rowSelector: 'ED',
       linkType: 'READ',
     })
-    await siteCollectionPage.linkIsEnabled({
+    await collectionPageObjectModel.linkIsEnabled({
       rowSelector: 'ED',
       linkType: 'EDIT',
     })
-    await siteCollectionPage.linkIsEnabled({
+    await collectionPageObjectModel.linkIsEnabled({
       rowSelector: 'ED',
       linkType: 'DELETE',
     })

@@ -9,22 +9,25 @@ test.beforeEach(async () => {
 test.describe('Unauthenticated user', () => {
   test.use({ storageState: { cookies: [], origins: [] } })
   test('Stratigraphic units list succeed', async ({ page }) => {
-    const collectionPage = new StratigraphicUnitCollectionPage(page)
+    const collectionPageObjectModel = new StratigraphicUnitCollectionPage(page)
     const suCode = 'ED.2023.1001'
-    await collectionPage.waitTableData()
-    await collectionPage.tableNotHasHeader('public')
-    await collectionPage.tableCellHasText(suCode, 'light brown')
-    await collectionPage.linkIsEnabled({
+    await collectionPageObjectModel.waitTableData()
+    await collectionPageObjectModel.tableNotHasHeader('public')
+    await collectionPageObjectModel.tableCellHasText(suCode, 'light brown')
+    await collectionPageObjectModel.linkIsEnabled({
       rowSelector: suCode,
       linkType: 'READ',
     })
-    await collectionPage.linkIsDisabled({
+    await collectionPageObjectModel.linkIsDisabled({
       rowSelector: suCode,
       linkType: 'EDIT',
     })
-    await collectionPage.linkIsDisabled({
+    await collectionPageObjectModel.linkIsDisabled({
       rowSelector: suCode,
       linkType: 'DELETE',
     })
+    await collectionPageObjectModel.expectClickHeaderSendOrderCollectionRequest(
+      'number',
+    )
   })
 })

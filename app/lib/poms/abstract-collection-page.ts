@@ -133,4 +133,21 @@ export abstract class AbstractCollectionPage extends AbstractAppPage {
     // @ts-ignore
     expect(body['hydra:totalItems']).toBe(count)
   }
+
+  async clickTableHeader(name: string) {
+    await this.getTable.getByRole('cell', { name }).click()
+  }
+
+  async expectClickHeaderSendOrderCollectionRequest(
+    headerName: string,
+    propertyName?: string,
+    glob = '**/*',
+  ) {
+    const requestPromise = this.page.waitForRequest(glob)
+    await this.clickTableHeader(headerName)
+    const request = await requestPromise
+    expect(request.url(), 'Order collection request sent').toMatch(
+      new RegExp(`order%5B${propertyName || headerName}%5D`),
+    )
+  }
 }
