@@ -28,6 +28,7 @@ test.describe('Unauthenticated user', () => {
     })
     await collectionPageObjectModel.expectClickHeaderSendOrderCollectionRequest(
       'number',
+      '**/stratigraphic_units*',
     )
   })
 })

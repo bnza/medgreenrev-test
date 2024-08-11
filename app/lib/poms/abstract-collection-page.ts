@@ -140,8 +140,8 @@ export abstract class AbstractCollectionPage extends AbstractAppPage {
 
   async expectClickHeaderSendOrderCollectionRequest(
     headerName: string,
+    glob: string,
     propertyName?: string,
-    glob = '**/*',
   ) {
     const requestPromise = this.page.waitForRequest(glob)
     await this.clickTableHeader(headerName)

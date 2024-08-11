@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { test } from '@playwright/test'
 import { SiteCollectionPage } from '@lib/poms/site-collection-page'
 import { loadFixtures } from '@lib/common/api'
 
@@ -27,6 +27,7 @@ test.describe('Unauthenticated user', () => {
     })
     await collectionPageObjectModel.expectClickHeaderSendOrderCollectionRequest(
       'code',
+      '**/sites*',
     )
   })
 })
