@@ -13,6 +13,8 @@ export abstract class AbstractAppPage {
   readonly authUserButton: Locator
   readonly userSettingsMeLink: Locator
   readonly getAppSnackbar: Locator
+  readonly getAppNavigationDrawer: Locator
+  readonly getAppNavigationDrawerToggleIcon: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -24,6 +26,8 @@ export abstract class AbstractAppPage {
     this.authUserButton = page.getByTestId('auth-user-button')
     this.userSettingsMeLink = page.getByTestId('user-settings-me-link')
     this.getAppSnackbar = page.getByTestId('app-snackbar')
+    this.getAppNavigationDrawer = page.getByTestId('app-navigation-drawer')
+    this.getAppNavigationDrawerToggleIcon = page.getByTestId('app-bar-nav-icon')
   }
 
   async logout() {
@@ -74,5 +78,33 @@ export abstract class AbstractAppPage {
       /^((?!No data available).)*$/,
     )
     await autocompleteContentLocator.nth(nth).click()
+  }
+
+  async openNavigationDrawer() {
+    await expect(this.getAppNavigationDrawerToggleIcon).toHaveCount(1)
+    const classes = await this.getAppNavigationDrawer.getAttribute('class')
+    if (!/v-navigation-drawer--active/.test(classes)) {
+      await this.getAppNavigationDrawerToggleIcon.click()
+    }
+  }
+
+  async openNavigationSection(key: string) {
+    const navigationSection: Locator = this.getAppNavigationDrawer.getByTestId(
+      `app-nav-drawer-li-${key}`,
+    )
+    const isOpen = await navigationSection
+      .locator('.v-list-group__items')
+      .isVisible()
+    if (!isOpen) {
+      await navigationSection.click()
+    }
+  }
+
+  async clickAppNavigationListItem(section: string, name: string) {
+    await this.openNavigationDrawer()
+    await this.openNavigationSection(section)
+    await this.getAppNavigationDrawer
+      .getByText(new RegExp(`${name}`, 'i'))
+      .click()
   }
 }

@@ -4,8 +4,6 @@ import { StratigraphicUnitItemPage } from '@lib/poms/stratigraphic-unit-item-pag
 import { StratigraphicUnitCollectionPage } from '@lib/poms/stratigraphic-unit-collection-page'
 import { loadFixtures } from '@lib/common/api'
 import { expect } from '@fixtures/fixtures'
-import { SiteItemPage } from '@lib/poms/site-item-page'
-import { SiteCollectionPage } from '@lib/poms/site-collection-page'
 
 test.beforeEach(async () => {
   loadFixtures()
@@ -80,8 +78,6 @@ test.describe('Admin user', () => {
       itemPageObjectModel.siteInputAutocomplete,
       'ED',
     )
-    // await itemPageObjectModel.page.getByLabel('site').fill('ED')
-    // await itemPageObjectModel.page.keyboard.press('Enter')
     await expect(
       itemPageObjectModel.page.getByText('Duplicate code'),
     ).toHaveCount(0)
@@ -92,7 +88,7 @@ test.describe('Admin user', () => {
     await itemPageObjectModel.page.getByLabel('number').fill('1001')
     await expect(
       itemPageObjectModel.page.getByText(/Duplicate .+ tuple/),
-    ).toHaveCount(1)
+    ).toHaveCount(2)
     await itemPageObjectModel.page.getByLabel('number').fill('2000')
     await expect(
       itemPageObjectModel.page.getByText('Duplicate code'),

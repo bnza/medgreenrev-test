@@ -17,12 +17,8 @@ test.describe('Unauthenticated user', () => {
     const searchPageObject = new SiteSearchPage(page)
     await searchPageObject.hasExpectedTitle()
     await searchPageObject.expectToBeEmpty()
-    await searchPageObject.getAddFilterButton.click()
 
-    await expect(searchPageObject.getAddFilterDialogTitle).toHaveText(
-      'Add filter',
-    )
-    await expect(searchPageObject.getAddFilterDialogContent).toHaveCount(1)
+    await searchPageObject.clickAddFilterButton()
 
     await searchPageObject.getSubmitAddFilterButton.click()
     await expect(searchPageObject.getAddFilterDialogContent).toHaveText(

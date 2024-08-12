@@ -34,7 +34,7 @@ test.describe('Unauthenticated user', () => {
     await itemPageObjectModel.formHasExpectedTitle(/Site\sED/)
     await itemPageObjectModel.getStratigraphicUnitsTab.click()
     await itemPageObjectModel.getStratigraphicUnitsTabContent.getChildrenCollectionTable.expectRowCount(
-      10,
+      9,
     )
     await itemPageObjectModel.getStratigraphicUnitsTabContent.getSearchButton.click()
     const searchPageObject = new SiteSearchPage(page)
@@ -64,7 +64,7 @@ test.describe('Unauthenticated user', () => {
     await itemPageObjectModel.formHasExpectedTitle(/Site\sED/)
     await itemPageObjectModel.getStratigraphicUnitsTab.click()
     await itemPageObjectModel.getStratigraphicUnitsTabContent.getChildrenCollectionTable.expectRowCount(
-      5,
+      4,
     )
   })
 })

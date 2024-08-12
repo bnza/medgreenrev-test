@@ -56,4 +56,11 @@ export abstract class AbstractSearchPage extends AbstractAppPage {
       count,
     )
   }
+
+  async clickAddFilterButton() {
+    await this.getAddFilterButton.click()
+
+    await expect(this.getAddFilterDialogTitle).toHaveText('Add filter')
+    await expect(this.getAddFilterDialogContent).toHaveCount(1)
+  }
 }
