@@ -65,6 +65,10 @@ export abstract class AbstractAppPage {
       .click()
   }
 
+  getAutocompleteContent() {
+    return this.page.locator('.v-autocomplete__content .v-list-item')
+  }
+
   async fillVuetifyVAutocompleteAncClickNth(
     locator: Locator,
     text: string,

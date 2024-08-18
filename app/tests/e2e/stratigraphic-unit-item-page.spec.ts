@@ -33,6 +33,41 @@ test.describe('Unauthenticated user', () => {
     await itemPageObjectModel.pageHasEmptyItem()
   })
 })
+
+test.describe('Base user', () => {
+  test.use({ storageState: 'playwright/.auth/base.json' })
+  test('Update item without Site permissions', async ({ page }) => {
+    const collectionPageObjectModel = new StratigraphicUnitCollectionPage(page)
+    await collectionPageObjectModel.waitTableData()
+    await page.getByLabel('Next page').click()
+    await collectionPageObjectModel
+      .getNavigationLink('WW.2024.1001', 'EDIT')
+      .click()
+    await expect(page.getByLabel('code')).not.toBeEditable()
+    await expect(page.getByLabel('year')).not.toBeEditable()
+    await expect(page.getByLabel('number')).not.toBeEditable()
+  })
+  test('Update item with site permissions', async ({ page }) => {
+    const itemPageObjectModel = new StratigraphicUnitItemPage(page)
+    await itemPageObjectModel.navigateFromCollectionPage(suCode, 'EDIT')
+    await itemPageObjectModel.siteInputAutocomplete.click()
+    await itemPageObjectModel.siteInputAutocomplete.fill('')
+    await expect(itemPageObjectModel.getAutocompleteContent()).toHaveCount(2)
+    await expect(page.getByLabel('year')).toBeEditable()
+    await expect(page.getByLabel('number')).toBeEditable()
+  })
+  test('Create item with site permissions', async ({ page }) => {
+    const itemPageObjectModel = new StratigraphicUnitItemPage(page)
+    const collectionPageObjectModel = new StratigraphicUnitCollectionPage(page)
+    await collectionPageObjectModel.waitTableData()
+    await collectionPageObjectModel.getCreateLink.click()
+    await itemPageObjectModel.siteInputAutocomplete.click()
+    await itemPageObjectModel.siteInputAutocomplete.fill('')
+    await expect(itemPageObjectModel.getAutocompleteContent()).toHaveCount(2)
+    await expect(page.getByLabel('year')).toBeEditable()
+    await expect(page.getByLabel('number')).toBeEditable()
+  })
+})
 test.describe('Admin user', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' })
   test('Delete item', async ({ page }) => {
@@ -41,7 +76,6 @@ test.describe('Admin user', () => {
     await expect(
       itemPageObjectModel.page.getByTestId('delete-item-alert-row'),
     ).toHaveCount(1)
-    const _url = itemPageObjectModel.page.url()
     await itemPageObjectModel.page
       .getByTestId('app-data-card-toolbar')
       .getByRole('button')
@@ -49,8 +83,6 @@ test.describe('Admin user', () => {
     const collectionPageObjectModel = new StratigraphicUnitCollectionPage(page)
     await collectionPageObjectModel.waitTableData()
     await expect(collectionPageObjectModel.getTableRow(suCode)).toHaveCount(0)
-    // await page.goto(_url)
-    // await itemPageObjectModel.pageHasEmptyItem()
   })
   test('Update item', async ({ page }) => {
     const itemPageObjectModel = new StratigraphicUnitItemPage(page)
