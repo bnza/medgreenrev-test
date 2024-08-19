@@ -52,7 +52,9 @@ test.describe('Base user', () => {
     await itemPageObjectModel.navigateFromCollectionPage(suCode, 'EDIT')
     await itemPageObjectModel.siteInputAutocomplete.click()
     await itemPageObjectModel.siteInputAutocomplete.fill('')
-    await expect(itemPageObjectModel.getAutocompleteContent()).toHaveCount(2)
+    await expect(itemPageObjectModel.getVuetifyAutocompleteContent).toHaveCount(
+      2,
+    )
     await expect(page.getByLabel('year')).toBeEditable()
     await expect(page.getByLabel('number')).toBeEditable()
   })
@@ -63,7 +65,9 @@ test.describe('Base user', () => {
     await collectionPageObjectModel.getCreateLink.click()
     await itemPageObjectModel.siteInputAutocomplete.click()
     await itemPageObjectModel.siteInputAutocomplete.fill('')
-    await expect(itemPageObjectModel.getAutocompleteContent()).toHaveCount(2)
+    await expect(itemPageObjectModel.getVuetifyAutocompleteContent).toHaveCount(
+      2,
+    )
     await expect(page.getByLabel('year')).toBeEditable()
     await expect(page.getByLabel('number')).toBeEditable()
   })

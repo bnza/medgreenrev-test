@@ -15,6 +15,8 @@ export abstract class AbstractAppPage {
   readonly getAppSnackbar: Locator
   readonly getAppNavigationDrawer: Locator
   readonly getAppNavigationDrawerToggleIcon: Locator
+  readonly getVuetifyOverlayContent: Locator
+  readonly getVuetifyAutocompleteContent: Locator
 
   constructor(page: Page) {
     this.page = page
@@ -28,6 +30,12 @@ export abstract class AbstractAppPage {
     this.getAppSnackbar = page.getByTestId('app-snackbar')
     this.getAppNavigationDrawer = page.getByTestId('app-navigation-drawer')
     this.getAppNavigationDrawerToggleIcon = page.getByTestId('app-bar-nav-icon')
+    this.getVuetifyOverlayContent = page.locator(
+      '.v-overlay__content .v-list-item',
+    )
+    this.getVuetifyAutocompleteContent = page.locator(
+      '.v-autocomplete__content .v-list-item',
+    )
   }
 
   async logout() {
@@ -59,14 +67,7 @@ export abstract class AbstractAppPage {
 
   async clickVuetifyVSelect(locator: Locator, text: string) {
     await locator.click()
-    await this.page
-      .locator('.v-select__content .v-list-item')
-      .filter({ has: this.page.getByText(text, { exact: true }) })
-      .click()
-  }
-
-  getAutocompleteContent() {
-    return this.page.locator('.v-autocomplete__content .v-list-item')
+    await this.page.getByRole('option', { name: text, exact: true }).click()
   }
 
   async fillVuetifyVAutocompleteAncClickNth(

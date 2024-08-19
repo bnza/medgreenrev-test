@@ -10,7 +10,7 @@ test.beforeEach(async () => {
 })
 test.describe('Unauthenticated user', () => {
   test.use({ storageState: { cookies: [], origins: [] } })
-  test('Can navigate from collection', async ({ page }) => {
+  test('Works as expected', async ({ page }) => {
     const collectionPageObject = new SiteCollectionPage(page)
     await collectionPageObject.waitTableData()
     await collectionPageObject.getSearchLink.click()
@@ -19,6 +19,13 @@ test.describe('Unauthenticated user', () => {
     await searchPageObject.expectToBeEmpty()
 
     await searchPageObject.clickAddFilterButton()
+
+    await searchPageObject.getAddFilterDialogPropertyInput.click()
+    await expect(
+      page.getByRole('option', { name: 'public' }),
+      'Protected fields are hidden for unauthenticated users',
+    ).toHaveCount(0)
+    await page.keyboard.press('Escape')
 
     await searchPageObject.getSubmitAddFilterButton.click()
     await expect(searchPageObject.getAddFilterDialogContent).toHaveText(
@@ -76,5 +83,32 @@ test.describe('Unauthenticated user', () => {
     await searchPageObject.getSubmitAddFiltersButton.click()
     await collectionPageObject.expectResponseTotalItems(6)
     await collectionPageObject.waitTableData()
+  })
+})
+test.describe('Base user', () => {
+  test.use({ storageState: 'playwright/.auth/base.json' })
+  test('Works as expected', async ({ page }) => {
+    const searchPageObject = new SiteSearchPage(page)
+    const collectionPageObject = new SiteCollectionPage(page)
+    await searchPageObject.goto()
+    await searchPageObject.clickAddFilterButton()
+    await searchPageObject.getAddFilterDialogPropertyInput.click()
+    await expect(
+      page.getByRole('option', { name: 'public' }),
+      'Protected fields are showed to unauthenticated users',
+    ).toHaveCount(1)
+    await page.keyboard.press('Escape')
+    await searchPageObject.clickVuetifyVSelect(
+      searchPageObject.getAddFilterDialogPropertyInput,
+      'public',
+    )
+    await searchPageObject.clickVuetifyVSelect(
+      searchPageObject.getAddFilterDialogOperatorInput,
+      'is false',
+    )
+    await searchPageObject.getSubmitAddFilterButton.click()
+    await expect(searchPageObject.getFiltersListItem).toHaveCount(1)
+    await searchPageObject.getSubmitAddFiltersButton.click()
+    await collectionPageObject.expectResponseTotalItems(1)
   })
 })

@@ -41,6 +41,12 @@ export abstract class AbstractSearchPage extends AbstractAppPage {
       this.getAppDataCard.getByTestId('submit-button')
   }
 
+  abstract get appUrl(): string
+
+  async goto() {
+    await this.page.goto(this.appUrl)
+  }
+
   async hasExpectedTitle() {
     await expect(this.appDataCardToolbar).toHaveText(/Search \(/)
   }
