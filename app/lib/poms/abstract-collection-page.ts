@@ -130,7 +130,6 @@ export abstract class AbstractCollectionPage extends AbstractAppPage {
   async expectResponseTotalItems(count: number) {
     const response = await this.collectionResponsePromise
     const body = await response.json()
-    // @ts-ignore
     expect(body['hydra:totalItems']).toBe(count)
   }
 
