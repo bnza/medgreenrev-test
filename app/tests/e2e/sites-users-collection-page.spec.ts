@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/test'
 import { loadFixtures } from '@lib/common/api'
-import { SitesUsersItemPage } from '@lib/poms/sites-users-item-page'
 
 test.beforeEach(async () => {
   loadFixtures()
@@ -9,7 +8,7 @@ test.beforeEach(async () => {
 test.describe('Admin user', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' })
   test('Sites/Users basic workflow succeed', async ({ page }) => {
-    await page.goto('/')
+    await page.goto('#/')
     await page.getByTestId('app-bar-nav-icon').click()
     await page.getByTestId('app-nav-drawer-li-admin').getByText('Admin').click()
     await page.getByTestId('app-nav-drawer-li-sites-users-privileges').click()
