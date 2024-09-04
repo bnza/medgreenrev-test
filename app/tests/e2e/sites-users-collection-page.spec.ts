@@ -55,4 +55,58 @@ test.describe('Admin user', () => {
       page.getByRole('row', { name: 'ALA user_base@example.com' }),
     ).toHaveCount(0)
   })
+  test('Sites/Users create from parent pages', async ({ page }) => {
+    await page.goto('#/')
+    await page.getByTestId('app-bar-nav-icon').click()
+    await page.getByTestId('app-nav-drawer-li-admin').getByText('Admin').click()
+    await page.getByTestId('app-nav-drawer-li-users').click()
+    await page
+      .getByRole('row', { name: 'user_base@example.com' })
+      .getByRole('link')
+      .nth(0)
+      .click()
+    await expect(page.getByTestId('app-data-card-toolbar')).toHaveText(
+      /user_base@example.com/,
+    )
+    await page.getByRole('tab', { name: 'sites' }).click()
+    await page.getByTestId('collection-create-link').click()
+    await expect(page.getByTestId('app-data-card-toolbar')).toHaveText(/create/)
+    await expect(page.getByLabel('user', { exact: true })).not.toBeEditable()
+    await page.getByRole('combobox').nth(0).click()
+    await page.getByRole('option', { name: 'ED Ed-Dur' }).click()
+    await expect(page.getByTestId('app-data-card')).toHaveText(/duplicate/i)
+    await page.getByRole('combobox').nth(0).click()
+    await page.getByLabel('site', { exact: true }).fill('')
+    await page.getByRole('option', { name: /ALA/ }).click()
+    await page.getByTestId('submit-button').click()
+    await expect(
+      page.getByRole('row', { name: 'ALA user_base@example.com' }),
+    ).toHaveCount(1)
+    await page.getByTestId('app-nav-drawer-li-data').getByText('Data').click()
+    await page.getByTestId('app-nav-drawer-li-sites').click()
+    await expect(page.getByTestId('app-data-card-toolbar')).toHaveText(
+      /Sites\s/,
+    )
+    await page
+      .getByRole('row', { name: /ALA/ })
+      .getByRole('link')
+      .nth(0)
+      .click()
+    await page.getByRole('tab', { name: 'users' }).click()
+    await page.getByTestId('collection-create-link').click()
+    await expect(page.getByTestId('app-data-card-toolbar')).toHaveText(/create/)
+    await expect(page.getByLabel('site', { exact: true })).not.toBeEditable()
+    await page.getByLabel('user', { exact: true }).click()
+    await page.getByText('user_base@example.com').click()
+    await page.getByRole('combobox').nth(0).click()
+    await expect(page.getByTestId('app-data-card')).toHaveText(/duplicate/i)
+    await page.getByLabel('user', { exact: true }).click()
+    await page.getByLabel('user', { exact: true }).fill('')
+    await page.getByText('user_editor@example.com').click()
+    await page.getByRole('combobox').nth(0).click()
+    await page.getByTestId('submit-button').click()
+    await expect(
+      page.getByRole('row', { name: 'ALA user_editor@example.com' }),
+    ).toHaveCount(1)
+  })
 })
