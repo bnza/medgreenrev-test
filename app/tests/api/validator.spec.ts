@@ -43,6 +43,19 @@ const getNthSuBySiteCode = async (
   const json = await response.json()
   return json['hydra:member'][number]
 }
+const getNthSusRelBySiteCode = async (
+  request: APIRequestContext,
+  code: string,
+  number = 0,
+) => {
+  const site = await getSiteByCode(request, code)
+
+  const response: APIResponse = await request.get(
+    `${apiUrl}/stratigraphic_units_relationships?site.id[]=${site.id}`,
+  )
+  const json = await response.json()
+  return json['hydra:member'][number]
+}
 
 test('Sites', async ({ request }) => {
   let response: APIResponse = await request.get(
@@ -114,4 +127,28 @@ test('Stratigraphic Units', async ({ request }) => {
     `${apiUrl}/validator/unique/stratigraphic-units/0/2023/1003`,
   )
   expect(await response.json(), "Stratigraphic unit shouldn't exists").toBe(1)
+})
+test('Stratigraphic Units Relationships', async ({ request }) => {
+  let response: APIResponse = await request.get(
+    `${apiUrl}/stratigraphic_units_relationships/`,
+  )
+  let json = await response.json()
+  const relationship = json['hydra:member'][0]
+  const sxSuId = relationship.sxSU.id
+  const dxSuId = relationship.dxSU.id
+
+  response = await request.get(
+    `${apiUrl}/validator/unique/stratigraphic_units_relationships/${sxSuId}/${dxSuId}`,
+  )
+  expect(
+    await response.json(),
+    'Stratigraphic unit relationship should exists',
+  ).toBe(0)
+  response = await request.get(
+    `${apiUrl}/validator/unique/stratigraphic_units_relationships/0/${dxSuId}`,
+  )
+  expect(
+    await response.json(),
+    'Stratigraphic unit relationship should not exists',
+  ).toBe(1)
 })

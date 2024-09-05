@@ -47,10 +47,10 @@ test.describe('Unauthenticated user', () => {
     await expect(searchPageObject.getAddFilterDialogContent).toHaveText(
       /This field is required/,
     )
-    await searchPageObject.fillVuetifyVAutocompleteAncClickNth(
-      searchPageObject.page.getByLabel('site'),
-      'ED',
-    )
+
+    await page.getByLabel('site').nth(0).fill('ED')
+    await page.getByRole('option', { name: 'ED Ed-Dur' }).click()
+
     await searchPageObject.getSubmitAddFilterButton.click()
 
     await expect(searchPageObject.getAddFilterDialog).toHaveCount(0)

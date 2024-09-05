@@ -6,6 +6,7 @@ interface JSONLDResponseMember {
   readonly '@id': string | number
   readonly '@type': string
 }
+
 interface JSONLDResponse<T> {
   readonly '@context': string
   readonly '@id': string
@@ -16,10 +17,11 @@ interface JSONLDResponse<T> {
 
 const tokens: Map<string, string> = new Map()
 export const apiUrl = process.env.API_URL || 'http://localhost:8000'
+
 export function loadFixtures() {
   console.info('Loading fixtures...')
   execSync(
-      `docker exec ${process.env.API_CONTAINER_ID} bin/console hautelook:fixtures:load --quiet >> /dev/null`,
+    `docker exec ${process.env.API_CONTAINER_ID} bin/console hautelook:fixtures:load --env=dev --quiet >> /dev/null`,
   )
 }
 

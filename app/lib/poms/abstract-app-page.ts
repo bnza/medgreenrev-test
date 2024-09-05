@@ -79,9 +79,11 @@ export abstract class AbstractAppPage {
     const autocompleteContentLocator = this.page.locator(
       '.v-autocomplete__content .v-list-item',
     )
-    await expect(autocompleteContentLocator).toHaveText(
-      /^((?!No data available).)*$/,
-    )
+    await expect(
+      autocompleteContentLocator.filter({ hasText: /No data available/ }),
+    ).toHaveCount(0)
+
+    await expect(autocompleteContentLocator).toHaveCount(nth + 1)
     await autocompleteContentLocator.nth(nth).click()
   }
 
