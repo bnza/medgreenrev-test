@@ -25,6 +25,13 @@ export function loadFixtures() {
   )
 }
 
+export function resetFixtureMedia() {
+  console.info('Resetting fixture media...')
+  execSync(
+    `docker exec ${process.env.API_CONTAINER_ID} bin/console app:fixtures:reset-media --env=dev --quiet >> /dev/null`,
+  )
+}
+
 export async function getAuthToken(
   credentials = { email: 'user_base@example.com', password: '0000' },
 ) {

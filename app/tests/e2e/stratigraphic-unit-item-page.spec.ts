@@ -2,8 +2,9 @@ import { test } from '@playwright/test'
 
 import { StratigraphicUnitItemPage } from '@lib/poms/stratigraphic-unit-item-page'
 import { StratigraphicUnitCollectionPage } from '@lib/poms/stratigraphic-unit-collection-page'
-import { loadFixtures } from '@lib/common/api'
+import { loadFixtures, resetFixtureMedia } from '@lib/common/api'
 import { expect } from '@fixtures/fixtures'
+import * as path from 'node:path'
 
 test.beforeEach(async () => {
   loadFixtures()
@@ -32,7 +33,7 @@ test.describe('Unauthenticated user', () => {
     await itemPageObjectModel.goto(0)
     await itemPageObjectModel.pageHasEmptyItem()
   })
-  test('Stratigraphic unit relationships tab workflow work as expected', async ({
+  test('Stratigraphic unit relationships tab workflow works as expected', async ({
     page,
   }) => {
     const itemPageObjectModel = new StratigraphicUnitItemPage(page)
@@ -90,7 +91,91 @@ test.describe('Base user', () => {
     await expect(page.getByLabel('year')).toBeEditable()
     await expect(page.getByLabel('number')).toBeEditable()
   })
+  test('Media tab workflow work as expected', async ({ page }) => {
+    resetFixtureMedia()
+
+    // Insufficient site privileges in order to modify media
+    const itemPageObjectModel = new StratigraphicUnitItemPage(page)
+    await itemPageObjectModel.navigateFromCollectionPage('AN.2024.1001', 'READ')
+    await itemPageObjectModel.getMediaTab.click()
+
+    await expect(page.getByTestId('media-object-join-card')).toHaveCount(1)
+    await expect(page.getByTestId('download-media-button')).toHaveCount(1)
+    await expect(
+      page
+        .getByTestId('media-object-join-card')
+        .getByTestId('delete-media-button'),
+    ).toHaveCount(0)
+    await expect(page.getByTestId('create-media-button')).toHaveCount(0)
+
+    await page
+      .getByTestId('app-data-card-toolbar')
+      .getByRole('link')
+      .first()
+      .click()
+
+    await itemPageObjectModel.collectionPageObjectModel
+      .getNavigationLink(suCode, 'READ')
+      .click()
+
+    // Sufficient site privileges in order to modify media
+    await itemPageObjectModel.getMediaTab.click()
+    await expect(page.getByTestId('media-object-join-card')).toHaveCount(4)
+    await expect(page.getByTestId('delete-media-object-card')).not.toBeVisible()
+    await page
+      .getByTestId('media-object-join-card')
+      .nth(0)
+      .getByTestId('delete-media-button')
+      .click()
+    await expect(page.getByTestId('delete-media-object-card')).toBeVisible()
+    await page
+      .getByTestId('delete-media-object-card')
+      .getByRole('button', { name: 'delete' })
+      .click()
+    await expect(page.getByTestId('delete-media-object-card')).toHaveText(
+      /deleting/i,
+    )
+    await expect(page.getByText('Successfully deleted media')).toHaveCount(1)
+    await expect(page.getByTestId('media-object-join-card')).toHaveCount(3)
+    await expect(page.getByTestId('delete-media-object-card')).not.toBeVisible()
+    await expect(page.getByTestId('create-media-object-card')).not.toBeVisible()
+    await page.getByTestId('create-media-button').click()
+    await expect(page.getByTestId('create-media-object-card')).toBeVisible()
+    const submitButton = page
+      .getByTestId('create-media-object-card')
+      .getByRole('button', { name: 'submit' })
+    await expect(submitButton).not.toBeEnabled()
+
+    await page
+      .getByLabel('File input', { exact: true })
+      .setInputFiles(
+        path.join(
+          __dirname,
+          '../../fixtures/media',
+          'ED221001B_changedName.pdf',
+        ),
+      )
+    await submitButton.click()
+    await expect(page.getByText(/Duplicate/)).toHaveCount(1)
+    await page.getByTestId('app-snackbar').getByRole('button').click()
+    await expect(page.getByTestId('create-media-object-card')).toBeVisible()
+    await page.getByLabel('File input', { exact: true }).setInputFiles([])
+    await expect(page.getByTestId('create-media-object-card')).toHaveText(
+      /required/i,
+    )
+    await expect(submitButton).not.toBeEnabled()
+    await page
+      .getByLabel('File input', { exact: true })
+      .setInputFiles(
+        path.join(__dirname, '../../fixtures/media', 'ED241001A.xls'),
+      )
+    await submitButton.click()
+    await expect(page.getByText('Successfully created media')).toHaveCount(1)
+    await expect(page.getByTestId('media-object-join-card')).toHaveCount(4)
+    await expect(page.getByTestId('create-media-object-card')).not.toBeVisible()
+  })
 })
+
 test.describe('Admin user', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' })
   test('Delete item', async ({ page }) => {

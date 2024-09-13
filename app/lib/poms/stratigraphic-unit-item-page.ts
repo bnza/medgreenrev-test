@@ -8,6 +8,7 @@ import { ChildrenTabContentLocator } from '@lib/locators/children-tab-content-lo
 export class StratigraphicUnitItemPage extends AbstractItemReadPage {
   readonly siteInputAutocomplete: Locator
   readonly getRelationshipsTab: Locator
+  readonly getMediaTab: Locator
   readonly getRelationshipsTabContent: ChildrenTabContentLocator
 
   constructor(page: Page) {
@@ -15,6 +16,9 @@ export class StratigraphicUnitItemPage extends AbstractItemReadPage {
     this.siteInputAutocomplete = page.getByLabel('site')
     this.getRelationshipsTab = page.getByRole('tab', {
       name: 'relationships',
+    })
+    this.getMediaTab = page.getByRole('tab', {
+      name: 'media',
     })
     this.getRelationshipsTabContent = new ChildrenTabContentLocator(
       page.getByTestId('tabs-window-relationships'),
