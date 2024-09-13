@@ -90,7 +90,28 @@ test.describe('Base user', () => {
   test('Works as expected', async ({ page }) => {
     const searchPageObject = new SiteSearchPage(page)
     const collectionPageObject = new SiteCollectionPage(page)
-    await searchPageObject.goto()
+    await collectionPageObject.waitTableData()
+
+    // Test download
+    await collectionPageObject.page
+      .getByTestId('download-resource-button')
+      .click()
+    await expect(
+      collectionPageObject.page.getByTestId('download-resource-dialog'),
+    ).toHaveCount(1)
+    await expect(
+      collectionPageObject.page.getByTestId('download-resource-total-items'),
+    ).toHaveText('12')
+    await collectionPageObject.page
+      .getByTestId('submit-download-resource-button')
+      .click()
+    await expect(
+      collectionPageObject.page.getByText('Download in progress'),
+    ).toHaveCount(1)
+    await expect(page.getByText('Data successfully downloaded')).toHaveCount(1)
+
+    await page.getByTestId('collection-search-link').click()
+
     await searchPageObject.clickAddFilterButton()
     await searchPageObject.getAddFilterDialogPropertyInput.click()
     await expect(
@@ -110,5 +131,11 @@ test.describe('Base user', () => {
     await expect(searchPageObject.getFiltersListItem).toHaveCount(1)
     await searchPageObject.getSubmitAddFiltersButton.click()
     await collectionPageObject.expectResponseTotalItems(1)
+    await collectionPageObject.page
+      .getByTestId('download-resource-button')
+      .click()
+    await expect(
+      collectionPageObject.page.getByTestId('download-resource-total-items'),
+    ).toHaveText('1')
   })
 })
