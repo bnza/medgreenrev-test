@@ -4,7 +4,7 @@ import { AbstractAppPage } from '@lib/poms/abstract-app-page'
 
 const navigationLinksTypes = {
   READ: 0,
-  EDIT: 1,
+  UPDATE: 1,
   DELETE: 2,
 }
 
@@ -16,6 +16,7 @@ type NavigationLinkSelector = {
 }
 
 export abstract class AbstractCollectionPage extends AbstractAppPage {
+  readonly getIdHeader: Locator
   readonly getTable: Locator
   readonly getCreateLink: Locator
   readonly getSearchLink: Locator
@@ -25,6 +26,7 @@ export abstract class AbstractCollectionPage extends AbstractAppPage {
 
   constructor(page: Page) {
     super(page)
+    this.getIdHeader = page.getByRole('cell', { name: 'ID', exact: true })
     this.getTable = page.getByTestId('app-data-card').getByRole('table')
     this.getCreateLink = page
       .getByTestId('app-data-card-toolbar')
@@ -49,7 +51,7 @@ export abstract class AbstractCollectionPage extends AbstractAppPage {
     expectedTableHeader: string = 'ID',
   ) {
     await this.page.goto(url)
-    await this.tableHasExpectedTitle(tableTitle)
+    await this.dataCardHasExpectedTitle(tableTitle)
     await this.tableHasHeader(expectedTableHeader)
   }
 
@@ -85,9 +87,9 @@ export abstract class AbstractCollectionPage extends AbstractAppPage {
       .nth(this.navigationLinksTypes['READ'])
   }
 
-  async tableHasExpectedTitle(expectedTitle: string | RegExp) {
+  async dataCardHasExpectedTitle(expectedTitle: string | RegExp) {
     await expect(
-      this.getTitle,
+      this.getAppDataCardToolbar,
       "Table's header has the right title",
     ).toHaveText(expectedTitle)
   }

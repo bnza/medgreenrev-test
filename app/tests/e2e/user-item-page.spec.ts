@@ -37,7 +37,7 @@ test.describe('Admin user', () => {
     const itemPageObjectModel = new UserItemPage(page)
     await itemPageObjectModel.navigateFromCollectionPage(
       'user_base@example.com',
-      'EDIT',
+      'UPDATE',
     )
     await itemPageObjectModel.page.getByLabel('ROLE_EDITOR').click()
     await expect(itemPageObjectModel.page.getByLabel('email')).toHaveAttribute(

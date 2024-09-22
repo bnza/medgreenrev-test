@@ -5,7 +5,7 @@ import { LoginPage } from '@lib/poms/login-page'
 
 export abstract class AbstractAppPage {
   readonly page: Page
-  readonly getTitle: Locator
+  readonly getAppDataCardToolbar: Locator
   readonly loginButton: Locator
   readonly homePageLogo: Locator
   readonly getAppDataCard: Locator
@@ -21,7 +21,7 @@ export abstract class AbstractAppPage {
   constructor(page: Page) {
     this.page = page
     this.getAppDataCard = page.getByTestId('app-data-card')
-    this.getTitle = page.getByTestId('app-data-card-toolbar')
+    this.getAppDataCardToolbar = page.getByTestId('app-data-card-toolbar')
     this.loginButton = page.getByTestId('login-button')
     this.appDataCardToolbar = page.getByTestId('app-data-card-toolbar')
     this.homePageLogo = page.getByTestId('home-page-logo')
@@ -113,5 +113,12 @@ export abstract class AbstractAppPage {
     await this.getAppNavigationDrawer
       .getByText(new RegExp(`${name}`, 'i'))
       .click()
+  }
+
+  async dataCardHasExpectedTitle(expectedTitle: string | RegExp) {
+    await expect(
+      this.getAppDataCardToolbar,
+      "Data table's header has the expected title",
+    ).toHaveText(expectedTitle)
   }
 }

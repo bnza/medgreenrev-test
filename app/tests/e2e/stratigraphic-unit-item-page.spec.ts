@@ -16,7 +16,7 @@ test.describe('Unauthenticated user', () => {
   test('Stratigraphic unit item form succeed', async ({ page }) => {
     const itemPageObjectModel = new StratigraphicUnitItemPage(page)
     await itemPageObjectModel.navigateFromCollectionPage(suCode)
-    await itemPageObjectModel.formHasExpectedTitle(/Stratigraphic Unit\s/)
+    await itemPageObjectModel.dataCardHasExpectedTitle(/Stratigraphic Unit\s/)
     await itemPageObjectModel.formHasExpectedInput('code')
     await itemPageObjectModel.formHasExpectedInput('year')
     await itemPageObjectModel.formHasExpectedInput('number')
@@ -38,7 +38,7 @@ test.describe('Unauthenticated user', () => {
   }) => {
     const itemPageObjectModel = new StratigraphicUnitItemPage(page)
     await itemPageObjectModel.navigateFromCollectionPage(suCode)
-    await itemPageObjectModel.formHasExpectedTitle(/Stratigraphic Unit\s/)
+    await itemPageObjectModel.dataCardHasExpectedTitle(/Stratigraphic Unit\s/)
     await itemPageObjectModel.getRelationshipsTab.click()
     await expect(page.getByTestId('su-relationship-card')).toHaveCount(7)
     await expect(page.getByTestId('enable-editing-button')).toHaveCount(0)
@@ -61,7 +61,7 @@ test.describe('Base user', () => {
     await collectionPageObjectModel.waitTableData()
     await page.getByLabel('Next page').click()
     await collectionPageObjectModel
-      .getNavigationLink('WW.2024.1001', 'EDIT')
+      .getNavigationLink('WW.2024.1001', 'UPDATE')
       .click()
     await expect(page.getByLabel('code')).not.toBeEditable()
     await expect(page.getByLabel('year')).not.toBeEditable()
@@ -69,7 +69,7 @@ test.describe('Base user', () => {
   })
   test('Update item with site permissions', async ({ page }) => {
     const itemPageObjectModel = new StratigraphicUnitItemPage(page)
-    await itemPageObjectModel.navigateFromCollectionPage(suCode, 'EDIT')
+    await itemPageObjectModel.navigateFromCollectionPage(suCode, 'UPDATE')
     await itemPageObjectModel.siteInputAutocomplete.click()
     await itemPageObjectModel.siteInputAutocomplete.fill('')
     await expect(itemPageObjectModel.getVuetifyAutocompleteContent).toHaveCount(
@@ -110,8 +110,7 @@ test.describe('Base user', () => {
 
     await page
       .getByTestId('app-data-card-toolbar')
-      .getByRole('link')
-      .first()
+      .getByTestId('button-navigation-back')
       .click()
 
     await itemPageObjectModel.collectionPageObjectModel
@@ -188,13 +187,33 @@ test.describe('Admin user', () => {
       .getByTestId('app-data-card-toolbar')
       .getByRole('button')
       .click()
-    const collectionPageObjectModel = new StratigraphicUnitCollectionPage(page)
-    await collectionPageObjectModel.waitTableData()
-    await expect(collectionPageObjectModel.getTableRow(suCode)).toHaveCount(0)
+    await expect(itemPageObjectModel.getAppSnackbar).toHaveText(/500/)
+    await itemPageObjectModel.getAppSnackbar.getByRole('button').click()
+    await page.getByTestId('app-data-card-toolbar').getByRole('link').click()
+    await expect(page.getByTestId('app-data-card-toolbar')).not.toHaveText(
+      /delete/i,
+    )
+    await itemPageObjectModel.navigateFromCollectionPage(
+      'AN.2024.1004',
+      'DELETE',
+    )
+    await expect(page.getByTestId('app-data-card-toolbar')).toHaveText(
+      /delete/i,
+    )
+    await itemPageObjectModel.page
+      .getByTestId('app-data-card-toolbar')
+      .getByRole('button')
+      .click()
+    await expect(page.getByTestId('app-data-card-toolbar')).not.toHaveText(
+      /delete/i,
+    )
+    await expect(itemPageObjectModel.getAppSnackbar).toHaveText(
+      'Successfully deleted resource',
+    )
   })
   test('Update item', async ({ page }) => {
     const itemPageObjectModel = new StratigraphicUnitItemPage(page)
-    await itemPageObjectModel.navigateFromCollectionPage(suCode, 'EDIT')
+    await itemPageObjectModel.navigateFromCollectionPage(suCode, 'UPDATE')
     await itemPageObjectModel.page.getByLabel('year').fill('2023')
     await itemPageObjectModel.page
       .getByTestId('app-data-card-toolbar')
@@ -268,7 +287,7 @@ test.describe('Admin user', () => {
   }) => {
     const itemPageObjectModel = new StratigraphicUnitItemPage(page)
     await itemPageObjectModel.navigateFromCollectionPage(suCode)
-    await itemPageObjectModel.formHasExpectedTitle(/Stratigraphic Unit\s/)
+    await itemPageObjectModel.dataCardHasExpectedTitle(/Stratigraphic Unit\s/)
     await itemPageObjectModel.getRelationshipsTab.click()
     await expect(page.getByTestId('su-relationship-card')).toHaveCount(7)
     await expect(page.getByTestId('enable-editing-button')).toHaveCount(1)

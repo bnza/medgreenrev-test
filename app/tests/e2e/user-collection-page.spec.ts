@@ -39,67 +39,78 @@ test.describe('Unauthenticated user', () => {
 test.describe('Admin user', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' })
   test('Has right permissions on users data', async ({ page }) => {
-    const userCollectionPage = new UserCollectionPage(page)
-    await userCollectionPage.waitTableData()
-    await userCollectionPage.linkIsEnabled({
-      rowSelector: 'user_base@example.com',
-      linkType: 'READ',
-    })
-    await userCollectionPage.linkIsEnabled({
-      rowSelector: 'user_base@example.com',
-      linkType: 'EDIT',
-    })
-    await userCollectionPage.linkIsEnabled({
-      rowSelector: 'user_base@example.com',
-      linkType: 'DELETE',
-    })
+    const collectionPageObjectModel = new UserCollectionPage(page)
+    await collectionPageObjectModel.waitTableData()
     await expect(
-      userCollectionPage.getRefreshPasswordButton('user_base@example.com'),
+      collectionPageObjectModel
+        .getTableRow('user_base@example.com')
+        .getByTestId('read-item-button'),
     ).toBeEnabled()
-    await userCollectionPage.linkIsEnabled({
-      rowSelector: 'user_admin@example.com',
-      linkType: 'READ',
-    })
-    await userCollectionPage.linkIsDisabled({
-      rowSelector: 'user_admin@example.com',
-      linkType: 'EDIT',
-    })
-    await userCollectionPage.linkIsDisabled({
-      rowSelector: 'user_admin@example.com',
-      linkType: 'DELETE',
-    })
     await expect(
-      userCollectionPage.getRefreshPasswordButton('user_admin@example.com'),
+      collectionPageObjectModel
+        .getTableRow('user_base@example.com')
+        .getByTestId('update-item-button'),
+    ).toBeEnabled()
+    await expect(
+      collectionPageObjectModel
+        .getTableRow('user_base@example.com')
+        .getByTestId('delete-item-button'),
+    ).toBeEnabled()
+    await expect(
+      collectionPageObjectModel
+        .getTableRow('user_base@example.com')
+        .getByTestId('reset-pw-button'),
+    ).toBeEnabled()
+    await expect(
+      collectionPageObjectModel
+        .getTableRow('user_admin@example.com')
+        .getByTestId('read-item-button'),
+    ).toBeEnabled()
+    await expect(
+      collectionPageObjectModel
+        .getTableRow('user_admin@example.com')
+        .getByTestId('update-item-button'),
+    ).not.toBeEnabled()
+    await expect(
+      collectionPageObjectModel
+        .getTableRow('user_admin@example.com')
+        .getByTestId('delete-item-button'),
+    ).not.toBeEnabled()
+    await expect(
+      collectionPageObjectModel
+        .getTableRow('user_admin@example.com')
+        .getByTestId('reset-pw-button'),
     ).toHaveAttribute('disabled')
   })
   test('Can reset user password', async ({ page }) => {
-    const userCollectionPage = new UserCollectionPage(page)
-    await userCollectionPage.waitTableData()
-    await userCollectionPage
-      .getRefreshPasswordButton('user_base@example.com')
+    const collectionPageObjectModel = new UserCollectionPage(page)
+    await collectionPageObjectModel.waitTableData()
+    await collectionPageObjectModel
+      .getTableRow('user_base@example.com')
+      .getByTestId('reset-pw-button')
       .click()
     await expect(
-      userCollectionPage.page.getByTestId('user-password-dialog'),
+      collectionPageObjectModel.page.getByTestId('user-password-dialog'),
     ).toHaveText(/Are you sure you want to/)
-    await userCollectionPage.page
+    await collectionPageObjectModel.page
       .getByTestId('user-password-dialog')
       .getByRole('button')
       .nth(1)
       .click()
     await expect(
-      userCollectionPage.page.getByTestId('user-password-dialog'),
+      collectionPageObjectModel.page.getByTestId('user-password-dialog'),
     ).toHaveText(/Resetting password/)
-    await expect(userCollectionPage.page.locator('#plainPassword')).toHaveCount(
-      1,
-    )
-    await userCollectionPage.page
+    await expect(
+      collectionPageObjectModel.page.locator('#plainPassword'),
+    ).toHaveCount(1)
+    await collectionPageObjectModel.page
       .getByTestId('user-password-dialog')
       .getByRole('button')
       .nth(1)
       .click()
     await expect(
-      userCollectionPage.page.getByTestId('app-snackbar'),
+      collectionPageObjectModel.page.getByTestId('app-snackbar'),
     ).toHaveText('Copied!')
-    await logoutAndLoginAfterResetPassword(userCollectionPage)
+    await logoutAndLoginAfterResetPassword(collectionPageObjectModel)
   })
 })

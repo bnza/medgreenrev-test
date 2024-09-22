@@ -35,14 +35,16 @@ export abstract class AbstractItemReadPage extends AbstractAppPage {
   ) {
     await this.collectionPageObjectModel.waitTableData()
     await this.collectionPageObjectModel
-      .getNavigationLink(rowSelector, linkType)
+      .getTableRow(rowSelector)
+      .getByTestId(`${linkType.toLowerCase()}-item-button`)
       .click()
   }
 
   async formHasExpectedTitle(expectedTitle: string | RegExp) {
-    await expect(this.getTitle, "Form's header has the right title").toHaveText(
-      expectedTitle,
-    )
+    await expect(
+      this.appDataCardToolbar,
+      "Form's header has the right title",
+    ).toHaveText(expectedTitle)
   }
 
   async formHasExpectedInput(label: string | RegExp) {

@@ -1,4 +1,4 @@
-import { test } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 import { StratigraphicUnitCollectionPage } from '@lib/poms/stratigraphic-unit-collection-page'
 import { loadFixtures } from '@lib/common/api'
 
@@ -14,18 +14,21 @@ test.describe('Unauthenticated user', () => {
     await collectionPageObjectModel.waitTableData()
     await collectionPageObjectModel.tableNotHasHeader('public')
     await collectionPageObjectModel.tableCellHasText(suCode, 'light brown')
-    await collectionPageObjectModel.linkIsEnabled({
-      rowSelector: suCode,
-      linkType: 'READ',
-    })
-    await collectionPageObjectModel.linkIsDisabled({
-      rowSelector: suCode,
-      linkType: 'EDIT',
-    })
-    await collectionPageObjectModel.linkIsDisabled({
-      rowSelector: suCode,
-      linkType: 'DELETE',
-    })
+    await expect(
+      collectionPageObjectModel
+        .getTableRow(suCode)
+        .getByTestId('read-item-button'),
+    ).toBeEnabled()
+    await expect(
+      collectionPageObjectModel
+        .getTableRow(suCode)
+        .getByTestId('update-item-button'),
+    ).not.toBeEnabled()
+    await expect(
+      collectionPageObjectModel
+        .getTableRow(suCode)
+        .getByTestId('delete-item-button'),
+    ).not.toBeEnabled()
     await collectionPageObjectModel.expectClickHeaderSendOrderCollectionRequest(
       'number',
       '**/stratigraphic_units*',

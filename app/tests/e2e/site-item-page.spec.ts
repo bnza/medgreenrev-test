@@ -15,7 +15,7 @@ test.describe('Unauthenticated user', () => {
   test('Site item form succeed', async ({ page }) => {
     const itemPageObjectModel = new SiteItemPage(page)
     await itemPageObjectModel.navigateFromCollectionPage('ED')
-    await itemPageObjectModel.formHasExpectedTitle(/Site\sED/)
+    await itemPageObjectModel.dataCardHasExpectedTitle(/Site\sED/)
     await itemPageObjectModel.formHasExpectedInput('code')
     await itemPageObjectModel.formHasExpectedInput('name')
     await itemPageObjectModel.formHasExpectedInput('description')
@@ -31,7 +31,7 @@ test.describe('Unauthenticated user', () => {
   test('Stratigraphic units tab', async ({ page }) => {
     const itemPageObjectModel = new SiteItemPage(page)
     await itemPageObjectModel.navigateFromCollectionPage('ED')
-    await itemPageObjectModel.formHasExpectedTitle(/Site\sED/)
+    await itemPageObjectModel.dataCardHasExpectedTitle(/Site\sED/)
     await itemPageObjectModel.getStratigraphicUnitsTab.click()
     await itemPageObjectModel.getStratigraphicUnitsTabContent.getChildrenCollectionTable.expectRowCount(
       9,
@@ -61,7 +61,7 @@ test.describe('Unauthenticated user', () => {
     await expect(searchPageObject.getFiltersListItem).toHaveCount(1)
     await searchPageObject.getSubmitAddFiltersButton.click()
     await page.waitForURL('**/' + itemPageObjectModel.getBasePath() + '/*')
-    await itemPageObjectModel.formHasExpectedTitle(/Site\sED/)
+    await itemPageObjectModel.dataCardHasExpectedTitle(/Site\sED/)
     await itemPageObjectModel.getStratigraphicUnitsTab.click()
     await itemPageObjectModel.getStratigraphicUnitsTabContent.getChildrenCollectionTable.expectRowCount(
       4,
@@ -73,7 +73,7 @@ test.describe('Admin user', () => {
   test.use({ storageState: 'playwright/.auth/admin.json' })
   test('Delete item', async ({ page }) => {
     const itemPageObjectModel = new SiteItemPage(page)
-    await itemPageObjectModel.navigateFromCollectionPage('SAH', 'DELETE')
+    await itemPageObjectModel.navigateFromCollectionPage('TA', 'DELETE')
     await expect(
       itemPageObjectModel.page.getByTestId('delete-item-alert-row'),
     ).toHaveCount(1)
@@ -82,31 +82,36 @@ test.describe('Admin user', () => {
       .getByTestId('app-data-card-toolbar')
       .getByRole('button')
       .click()
-    const siteCollectionPage = new SiteCollectionPage(page)
-    await siteCollectionPage.waitTableData()
+    await expect(itemPageObjectModel.getAppSnackbar).toHaveText(
+      'Successfully deleted resource',
+    )
+    await itemPageObjectModel.dataCardHasExpectedTitle(/sites/i)
     await page.goto(_url)
     await itemPageObjectModel.pageHasEmptyItem()
   })
   test('Update item', async ({ page }) => {
     const itemPageObjectModel = new SiteItemPage(page)
-    await itemPageObjectModel.navigateFromCollectionPage('ED', 'EDIT')
+    await itemPageObjectModel.navigateFromCollectionPage('ED', 'UPDATE')
     await itemPageObjectModel.page.getByLabel('name').fill('A nice old city')
     await itemPageObjectModel.page
       .getByTestId('app-data-card-toolbar')
       .getByRole('button')
       .click()
-    await expect(
-      itemPageObjectModel.page
-        .getByTestId('app-data-card-toolbar')
-        .getByText(/Site/),
-    ).not.toHaveText('delete')
+    await expect(itemPageObjectModel.getAppDataCardToolbar).not.toHaveText(
+      /update/i,
+    )
     await expect(itemPageObjectModel.page.getByLabel('name')).toHaveValue(
       'A nice old city',
     )
+    await itemPageObjectModel.getAppDataCardToolbar
+      .getByTestId('button-navigation-back')
+      .click()
+    await expect(itemPageObjectModel.getAppDataCardToolbar).toHaveText(/sites/i)
   })
   test('Create item', async ({ page }) => {
     const siteCollectionPage = new SiteCollectionPage(page)
     await siteCollectionPage.waitTableData()
+    await siteCollectionPage.getIdHeader.click()
     await siteCollectionPage.getCreateLink.click()
     const itemPageObjectModel = new SiteItemPage(page)
     await itemPageObjectModel.page.getByLabel('code').fill('ED')

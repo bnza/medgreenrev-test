@@ -82,7 +82,7 @@ test.describe('Unauthenticated user', () => {
 
     const sitePageObjectModel = new SiteItemPage(page)
     await sitePageObjectModel.clickAppNavigationListItem('data', 'site')
-    await expect(sitePageObjectModel.getTitle).toHaveText(/site/i)
+    await expect(sitePageObjectModel.getAppDataCardToolbar).toHaveText(/site/i)
     await sitePageObjectModel.navigateFromCollectionPage('ED')
     await sitePageObjectModel.getStratigraphicUnitsTab.click()
     await sitePageObjectModel.getStratigraphicUnitsTabContent.getChildrenCollectionTable.expectRowCount(
@@ -124,7 +124,9 @@ test.describe('Unauthenticated user', () => {
       'data',
       'stratigraphic',
     )
-    await expect(collectionPageObject.getTitle).toHaveText(/Stratigraphic/)
+    await expect(collectionPageObject.getAppDataCardToolbar).toHaveText(
+      /Stratigraphic/,
+    )
 
     await collectionPageObject.page
       .getByTestId('collection-search-link')

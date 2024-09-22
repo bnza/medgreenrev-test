@@ -47,7 +47,14 @@ test.describe('Admin user', () => {
       /[0-9a-f\-]{36}/,
     )
     await page.getByTestId('delete-item-button').click()
-    await page.getByTestId('app-data-card-toolbar').getByRole('button').click()
+    await expect(page.getByTestId('app-data-card-toolbar')).toHaveText(
+      /delete/i,
+    )
+    await page.getByTestId('submit-delete-button').click()
+    // await page
+    //   .getByTestId('app-data-card-toolbar')
+    //   .getByTestId('button-navigation-back')
+    //   .click()
     await expect(page.getByTestId('app-data-card-toolbar')).not.toHaveText(
       /[0-9a-f\-]{36}/,
     )

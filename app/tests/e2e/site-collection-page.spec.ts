@@ -1,4 +1,4 @@
-import { test } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 import { SiteCollectionPage } from '@lib/poms/site-collection-page'
 import { loadFixtures } from '@lib/common/api'
 
@@ -13,18 +13,33 @@ test.describe('Unauthenticated user', () => {
     await collectionPageObjectModel.waitTableData()
     await collectionPageObjectModel.tableNotHasHeader('public')
     await collectionPageObjectModel.tableCellHasText('ED', 'Ed-Dur')
-    await collectionPageObjectModel.linkIsEnabled({
-      rowSelector: 'ED',
-      linkType: 'READ',
-    })
-    await collectionPageObjectModel.linkIsDisabled({
-      rowSelector: 'ED',
-      linkType: 'EDIT',
-    })
-    await collectionPageObjectModel.linkIsDisabled({
-      rowSelector: 'ED',
-      linkType: 'DELETE',
-    })
+    await expect(
+      collectionPageObjectModel
+        .getTableRow('ED')
+        .getByTestId('read-item-button'),
+    ).toBeEnabled()
+    await expect(
+      collectionPageObjectModel
+        .getTableRow('ED')
+        .getByTestId('update-item-button'),
+    ).not.toBeEnabled()
+    await expect(
+      collectionPageObjectModel
+        .getTableRow('ED')
+        .getByTestId('delete-item-button'),
+    ).not.toBeEnabled()
+    // await collectionPageObjectModel.linkIsEnabled({
+    //   rowSelector: 'ED',
+    //   linkType: 'READ',
+    // })
+    // await collectionPageObjectModel.linkIsDisabled({
+    //   rowSelector: 'ED',
+    //   linkType: 'EDIT',
+    // })
+    // await collectionPageObjectModel.linkIsDisabled({
+    //   rowSelector: 'ED',
+    //   linkType: 'DELETE',
+    // })
     await collectionPageObjectModel.expectClickHeaderSendOrderCollectionRequest(
       'code',
       '**/sites*',
@@ -55,17 +70,20 @@ test.describe('Admin user', () => {
     await collectionPageObjectModel.waitTableData()
     await collectionPageObjectModel.tableHasHeader('public')
     await collectionPageObjectModel.tableCellHasText('ED', 'Ed-Dur')
-    await collectionPageObjectModel.linkIsEnabled({
-      rowSelector: 'ED',
-      linkType: 'READ',
-    })
-    await collectionPageObjectModel.linkIsEnabled({
-      rowSelector: 'ED',
-      linkType: 'EDIT',
-    })
-    await collectionPageObjectModel.linkIsEnabled({
-      rowSelector: 'ED',
-      linkType: 'DELETE',
-    })
+    await expect(
+      collectionPageObjectModel
+        .getTableRow('ED')
+        .getByTestId('read-item-button'),
+    ).toBeEnabled()
+    await expect(
+      collectionPageObjectModel
+        .getTableRow('ED')
+        .getByTestId('update-item-button'),
+    ).toBeEnabled()
+    await expect(
+      collectionPageObjectModel
+        .getTableRow('ED')
+        .getByTestId('delete-item-button'),
+    ).toBeEnabled()
   })
 })
