@@ -28,18 +28,6 @@ test.describe('Unauthenticated user', () => {
         .getTableRow('ED')
         .getByTestId('delete-item-button'),
     ).not.toBeEnabled()
-    // await collectionPageObjectModel.linkIsEnabled({
-    //   rowSelector: 'ED',
-    //   linkType: 'READ',
-    // })
-    // await collectionPageObjectModel.linkIsDisabled({
-    //   rowSelector: 'ED',
-    //   linkType: 'EDIT',
-    // })
-    // await collectionPageObjectModel.linkIsDisabled({
-    //   rowSelector: 'ED',
-    //   linkType: 'DELETE',
-    // })
     await collectionPageObjectModel.expectClickHeaderSendOrderCollectionRequest(
       'code',
       '**/sites*',

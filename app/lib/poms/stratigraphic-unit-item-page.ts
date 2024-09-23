@@ -9,7 +9,9 @@ export class StratigraphicUnitItemPage extends AbstractItemReadPage {
   readonly siteInputAutocomplete: Locator
   readonly getRelationshipsTab: Locator
   readonly getMediaTab: Locator
+  readonly getSampleTab: Locator
   readonly getRelationshipsTabContent: ChildrenTabContentLocator
+  readonly getSampleTabContent: Locator
 
   constructor(page: Page) {
     super(page)
@@ -17,12 +19,16 @@ export class StratigraphicUnitItemPage extends AbstractItemReadPage {
     this.getRelationshipsTab = page.getByRole('tab', {
       name: 'relationships',
     })
+    this.getSampleTab = page.getByRole('tab', {
+      name: 'sample',
+    })
     this.getMediaTab = page.getByRole('tab', {
       name: 'media',
     })
     this.getRelationshipsTabContent = new ChildrenTabContentLocator(
       page.getByTestId('tabs-window-relationships'),
     )
+    this.getSampleTabContent = page.getByTestId('tabs-window-samples')
   }
 
   protected _getCollectionPageModel(page: Page): AbstractCollectionPage {

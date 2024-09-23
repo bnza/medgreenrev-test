@@ -69,7 +69,19 @@ export abstract class AbstractCollectionPage extends AbstractAppPage {
     const _code = new RegExp(`^${code}$`)
     return this.getTable
       .getByRole('row')
-      .filter({ has: this.page.locator(`td`, { hasText: _code }) })
+      .filter({ has: this.page.locator('td', { hasText: _code }) })
+  }
+
+  getTableRowBySuCodeAndNumber(
+    siteCode: string,
+    suYear: number,
+    suNumber: number,
+    number: number,
+  ) {
+    const _code = new RegExp(
+      `${siteCode}\\.${suYear}\\.${suNumber}.+\\s${number}\\s`,
+    )
+    return this.getTable.getByRole('row', { name: _code })
   }
 
   getNavigationLink(
@@ -81,11 +93,11 @@ export abstract class AbstractCollectionPage extends AbstractAppPage {
       .nth(this.navigationLinksTypes[linkType])
   }
 
-  getReadNavigationLink(rowSelector: number | string) {
-    return this.getTableRow(rowSelector)
-      .getByRole('link')
-      .nth(this.navigationLinksTypes['READ'])
-  }
+  // getReadNavigationLink(rowSelector: number | string) {
+  //   return this.getTableRow(rowSelector)
+  //     .getByRole('link')
+  //     .nth(this.navigationLinksTypes['READ'])
+  // }
 
   async dataCardHasExpectedTitle(expectedTitle: string | RegExp) {
     await expect(
