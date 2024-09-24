@@ -12,7 +12,7 @@ setup('authenticate as admin ser', async ({ page }) => {
   const loginPage = new LoginPage(page)
   await loginPage.goto()
   await loginPage.login(credentials.ADMIN)
-  await expect(page.getByTestId('app-snackbar')).toHaveText(
+  await expect(page.getByTestId('app-snackbar').first()).toHaveText(
     /successfully logged in/,
   )
   await page.context().storageState({ path: adminFile })
@@ -23,7 +23,7 @@ setup('authenticate as editor user', async ({ page }) => {
   const loginPage = new LoginPage(page)
   await loginPage.goto()
   await loginPage.login(credentials.EDITOR)
-  await expect(page.getByTestId('app-snackbar')).toHaveText(
+  await expect(page.getByTestId('app-snackbar').first()).toHaveText(
     /successfully logged in/,
   )
   await page.context().storageState({ path: editorFile })
@@ -34,7 +34,7 @@ setup('authenticate as base user', async ({ page }) => {
   const loginPage = new LoginPage(page)
   await loginPage.goto()
   await loginPage.login(credentials.BASE)
-  await expect(page.getByTestId('app-snackbar')).toHaveText(
+  await expect(page.getByTestId('app-snackbar').first()).toHaveText(
     /successfully logged in/,
   )
   await page.context().storageState({ path: baseFile })
