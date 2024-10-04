@@ -47,8 +47,8 @@ export abstract class AbstractSearchPage extends AbstractAppPage {
     await this.page.goto(this.appUrl)
   }
 
-  async hasExpectedTitle() {
-    await expect(this.appDataCardToolbar).toHaveText(/Search \(/)
+  async hasExpectedTitle(nth = 0) {
+    await expect(this.getAppDataCardToolbar.nth(nth)).toHaveText(/Search \(/)
   }
 
   async expectToBeEmpty() {

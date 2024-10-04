@@ -21,9 +21,8 @@ export abstract class AbstractAppPage {
   constructor(page: Page) {
     this.page = page
     this.getAppDataCard = page.getByTestId('app-data-card')
-    this.getAppDataCardToolbar = page.getByTestId('app-data-card-toolbar')
+    this.getAppDataCardToolbar = page.getByTestId('data-card-toolbar')
     this.loginButton = page.getByTestId('login-button')
-    this.appDataCardToolbar = page.getByTestId('app-data-card-toolbar')
     this.homePageLogo = page.getByTestId('home-page-logo')
     this.authUserButton = page.getByTestId('auth-user-button')
     this.userSettingsMeLink = page.getByTestId('user-settings-me-link')
@@ -117,7 +116,7 @@ export abstract class AbstractAppPage {
 
   async dataCardHasExpectedTitle(expectedTitle: string | RegExp) {
     await expect(
-      this.getAppDataCardToolbar,
+      this.getAppDataCardToolbar.nth(0),
       "Data table's header has the expected title",
     ).toHaveText(expectedTitle)
   }
