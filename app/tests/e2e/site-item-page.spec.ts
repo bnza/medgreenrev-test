@@ -66,6 +66,7 @@ test.describe('Unauthenticated user', () => {
     await itemPageObjectModel.getStratigraphicUnitsTabContent.getChildrenCollectionTable.expectRowCount(
       4,
     )
+    //create new Stratigraphic unit
   })
 })
 
